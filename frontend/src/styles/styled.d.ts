@@ -9,8 +9,16 @@ declare module 'styled-components' {
       secondary: string;
       card: string;
       border: string;
-      button_primary: string;
-      button_secondary: string;
-    };
+      button: {
+        primary: string;
+        secondary: string;
+        ghost: string;
+        danger: string;
+        primaryHover: string;
+        secondaryHover: string;
+        ghostHover: string;
+        dangerHover: string
+      }
+    }
   }
 }

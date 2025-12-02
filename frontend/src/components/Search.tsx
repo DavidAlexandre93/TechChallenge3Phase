@@ -1,6 +1,8 @@
 import styled from "styled-components";
-import { FaSearch } from "react-icons/fa";
-import { useState, useEffect } from "react";
+import { FaSearch, FaTimes } from "react-icons/fa";
+import { useState, useEffect, useRef } from "react";
+import { useSearch } from "@/hooks/useSearch";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const SearchContainer = styled.div`
   display: flex;
@@ -32,6 +34,18 @@ const SearchIcon = styled(FaSearch)`
   font-size: 0.9rem;
 `;
 
+const ClearIcon = styled(FaTimes)`
+  color: ${({ theme }) => theme.colors.text};
+  opacity: 0.7;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 1;
+  }
+`;
+
 const SearchInput = styled.input`
   border: none;
   outline: none;
@@ -50,6 +64,10 @@ const SearchInput = styled.input`
 
 export function SearchBar() {
   const [textoSearchBar, setTextoSearchBar] = useState<string>("Pesquisar...");
+  const { searchTerm, setSearchTerm } = useSearch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -65,12 +83,33 @@ export function SearchBar() {
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-    
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+
+    if (location.pathname !== "/") {
+      navigate("/");
+    }
+  };
+
+  const handleClear = () => {
+    setSearchTerm("");
+    // if (inputRef.current) inputRef.current.value = "";
+  };
+
+  useEffect(() => {
+    if (location.pathname.startsWith("/post/")) {
+      setSearchTerm("");
+    }
+  }, [location.pathname, setSearchTerm]);
+
   return (
 
     <SearchContainer>
       <SearchIcon />
-      <SearchInput type="text" placeholder={textoSearchBar} />
+      <SearchInput ref={inputRef} type="text" placeholder={textoSearchBar} id="search-bar" onChange={handleChange} value={searchTerm}/>
+      {searchTerm && <ClearIcon onClick={handleClear} title="Limpar busca" />}
     </SearchContainer>
   );
 }

@@ -19,20 +19,21 @@ router.get("/:id", async (req, res) => {
 
 // Criar post (apenas TEACHER)
 router.post("/", authenticate, authorizeRole("TEACHER"), async (req: AuthRequest, res) => {
-  const post = new Post({ ...req.body, author: req.user!.id });
+  const post = new Post({ ...req.body, author: req.user!.name });
   await post.save();
   res.json(post);
 });
 
-// Editar post
+// Editar post (apenas TEACHER)
 router.put("/:id", authenticate, authorizeRole("TEACHER"), async (req, res) => {
   const post = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true });
   res.json(post);
 });
 
-// Excluir post
+// Excluir post com soft delete (apenas TEACHER)
 router.delete("/:id", authenticate, authorizeRole("TEACHER"), async (req, res) => {
-  await Post.findByIdAndDelete(req.params.id);
+  // await Post.findByIdAndDelete(req.params.id);
+  await Post.findById(req.params.id).updateOne({ status: "deletado" });
   res.json({ message: "Post deletado" });
 });
 

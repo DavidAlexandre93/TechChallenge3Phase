@@ -10,12 +10,12 @@ export async function loginUser(data: LoginData) {
   return res.data; // { token, user: { email, role, id } }
 }
 
-export async function registerUser(data: {
-  name: string;
-  email: string;
-  password: string;
-  role?: string;
-}) {
-  const res = await api.post("/auth/register", data);
-  return res.data;
-}
+// export async function registerUser(data: {
+//   name: string;
+//   email: string;
+//   password: string;
+//   role?: string;
+// }) {
+//   const res = await api.post("/auth/register", data);
+//   return res.data;
+// }

@@ -1,58 +1,48 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { useState } from 'react'
 import '@/App.css'
-import { MainLayout } from "@/layout/MainLayout";
 import { ThemeProvider } from "styled-components";
 import { GlobalStyle } from "@/styles/GlobalStyle";
 import { lightTheme, darkTheme } from "@/styles/theme";
+import { AuthProvider } from '@/context/AuthProvider';
+import { SearchProvider } from "@/context/SearchProvider";
 import { Header } from '@/components/Header';
 import { Home } from "@/pages/Home.tsx";
 import { PostPage } from '@/pages/PostPage';
 import { Login } from '@/pages/Login.tsx';
+import { CreatePost } from "@/pages/CreatePost";
+import { EditPost } from "@/pages/EditPost";
+import { Footer } from '@/components/Footer';
+import { PrivateRoute } from '@/components/PrivateRoute';
 
 function App() {
-  // const [count, setCount] = useState(0)
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   return (
     <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
-      <GlobalStyle />
-      <BrowserRouter>
-        <Header isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} >
-        </Header>
+      <AuthProvider>
+      <SearchProvider>
+        <GlobalStyle />
+        <BrowserRouter>
+          <Header isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} >
+          </Header>
 
-        <Routes>
-          <Route element={<MainLayout />}></Route>
+          <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/post/:id" element={<PostPage />} />
             <Route path="/login" element={<Login />} />
-        </Routes>
 
-      </BrowserRouter>
+            {/* Páginas protegidas */}
+            <Route path="/create" element={<PrivateRoute><CreatePost /></PrivateRoute>} />
+            <Route path="/edit/:id" element={<PrivateRoute><EditPost /></PrivateRoute>} />
+          </Routes>
+
+          <Footer></Footer>
+        </BrowserRouter>
+      </SearchProvider>
+      </AuthProvider>
     </ThemeProvider>
 
-    // <>
-    //   <div>
-    //     <a href="https://vite.dev" target="_blank">
-    //       <img src={viteLogo} className="logo" alt="Vite logo" />
-    //     </a>
-    //     <a href="https://react.dev" target="_blank">
-    //       <img src={reactLogo} className="logo react" alt="React logo" />
-    //     </a>
-    //   </div>
-    //   <h1>Vite + React</h1>
-    //   <div className="card">
-    //     <button onClick={() => setCount((count) => count + 1)}>
-    //       count is {count}
-    //     </button>
-    //     <p>
-    //       Edit <code>src/App.tsx</code> and save to test HMR
-    //     </p>
-    //   </div>
-    //   <p className="read-the-docs">
-    //     Click on the Vite and React logos to learn more
-    //   </p>
-    // </>
   )
 }
 
