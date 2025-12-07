@@ -1,21 +1,55 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import { BookOpen } from "lucide-react"; // ícone semelhante ao da imagem
 
-const FooterBar = styled.footer`
-  background: ${({ theme }) => theme.colors.background};
-  color: ${({ theme }) => theme.colors.text};
-  /* border-top: 1px solid ${({ theme }) => theme.colors.border}; */
-  text-align: center;
-  padding: 10px;
-  font-size: 0.9rem;
-  z-index: 1000;
-
-  position: fixed;
-  bottom: 0;
-  width: calc(100% - 5rem);
-  left: 50%;
-  transform: translateX(-50%);
+const FooterWrapper = styled.footer`
   width: 100%;
+  background: #fff;
+  border-top: 1px solid #e5e7eb;
+  padding: 10px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #6b7280;
+  position: relative;
+  bottom: 0;
+`;
+
+const LeftText = styled.div`
+  color: #374151;
+
+  a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+`;
+
+const RightLinks = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  svg {
+    color: #2563eb;
+    width: 18px;
+    height: 18px;
+  }
+
+  a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 `;
 
 export function Footer() {
@@ -28,15 +62,21 @@ export function Footer() {
   }, []);
 
   return (
-    <FooterBar>
-      © {new Date().getFullYear()}{" "}
-      {isMobile ? (
-        <>
-          Plataforma Educacional <br /> Desenvolvido pelo Grupo 20
-        </>
-      ) : (
-        <>Plataforma Educacional — Desenvolvido pelo Grupo 20</>
+    <FooterWrapper>
+      <LeftText>
+        © {new Date().getFullYear()}{" "}
+        Tech Challenge. Desenvolvimento Web Full Stack.
+      </LeftText>
+
+      {!isMobile && (
+        <RightLinks>
+          <BookOpen />
+          <a href="https://github.com/Group10Fiap/TechChallenge3Phase" target="_blank" rel="noopener noreferrer">
+            GitHub
+          </a>
+          <a href="#">Docs</a>
+        </RightLinks>
       )}
-    </FooterBar>
+    </FooterWrapper>
   );
 }
