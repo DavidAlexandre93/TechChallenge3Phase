@@ -10,15 +10,12 @@ import { SearchBar } from "@/components/Search";
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center; /* ✅ centraliza horizontalmente */
-  justify-content: flex-start;
+  align-items: center;
   width: 100%;
-  max-width: 1200px; /* limite para conteúdo */
-  margin: 0 auto; /* ✅ centraliza o container na viewport */
+  max-width: 1200px;
+  margin: 0 auto;
   min-height: 100vh;
-  background-color: ${({ theme }) => theme.colors.background};
 `;
-
 
 const Hero = styled.section`
   background: linear-gradient(90deg, #2563eb, #1e40af);
@@ -26,86 +23,120 @@ const Hero = styled.section`
   border-radius: 12px;
   padding: 50px 60px;
   width: 100%;
-  max-width: 900px; /* ✅ largura máxima controlada, centraliza o bloco */
-  text-align: center; /* ✅ Centraliza texto e search dentro do hero */
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  max-width: 1100px;
+  text-align: left;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
   margin-top: 40px;
-  margin-bottom: 60px;
+  margin-bottom: 35px; /* ⬅️ Reduzido (era 50–60px) */
 
   h1 {
-    font-size: 2.4rem;
+    font-size: 2.2rem;
     font-weight: 700;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   p {
-    color: #dbeafe;
-    margin-bottom: 20px;
-    font-size: 1.1rem;
+    color: #e0e7ff;
+    margin-bottom: 20px; /* ⬅️ Menor espaçamento antes da busca */
+    font-size: 1.05rem;
   }
 
   .search-wrapper {
     background-color: white;
-    border-radius: 10px;
-    max-width: 400px;
-    margin: 0 auto; /* ✅ Centraliza a barra de busca */
-    padding: 6px 10px;
+    border-radius: 12px;
+    max-width: 500px;
+    padding: 8px 16px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
   }
 
   @media (max-width: 768px) {
-    padding: 40px 20px;
+    text-align: center;
+    padding: 40px 25px;
   }
 `;
 
 const PostsSection = styled.section`
   width: 100%;
-  max-width: 900px; /* ✅ Centraliza o grid igual ao hero */
+  max-width: 1100px;
+  padding: 0 20px 60px 20px; /* ⬅️ Espaço controlado até o footer */
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 25px;
-  text-align: left;
-
-  h2 {
-    font-size: 1.6rem;
-    font-weight: 600;
-    color: ${({ theme }) => theme.colors.text};
-    align-self: flex-start; /* título alinhado à esquerda dentro do container central */
-  }
 `;
 
 const PostsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  gap: 20px; /* ⬅️ Antes: 25px */
   width: 100%;
+  margin-top: 10px; /* ⬅️ aproxima os cards do título */
 `;
 
+
 const PostCard = styled(Link)`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  background-color: ${({ theme }) => theme.colors.card};
-  border-radius: 10px;
-  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06); /* ⬅️ sombra mais leve */
+  padding: 22px 24px;
   text-decoration: none;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  transition: transform 0.15s ease, box-shadow 0.2s ease;
+  transition: all 0.2s ease;
 
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
   }
+`;
 
-  h3 {
-    color: ${({ theme }) => theme.colors.text};
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-  }
 
-  p {
-    color: ${({ theme }) => theme.colors.secondary};
-    font-size: 0.95rem;
+const Tag = styled.span`
+  background: #e0ebff;
+  color: #2563eb;
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: 8px;
+  align-self: flex-start;
+  margin-bottom: 12px;
+`;
+
+const Title = styled.h3`
+  color: #1e3a8a;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  line-height: 1.4;
+`;
+
+const Excerpt = styled.p`
+  color: #4b5563;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 15px;
+`;
+
+const Meta = styled.div`
+  font-size: 0.85rem;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 15px;
+`;
+
+const ReadMore = styled.button`
+  background: white;
+  border: 1.5px solid #2563eb;
+  color: #2563eb;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+
+  &:hover {
+    background: #2563eb;
+    color: white;
   }
 `;
 
@@ -139,19 +170,27 @@ export function Home() {
 
       <PostsSection>
         {postsFiltrados.length === 0 ? (
-          <p style={{ color: "#888", fontWeight: "500" }}>
+          <p style={{ color: "#888", fontWeight: "500", textAlign: "center" }}>
             Nenhum post encontrado.
           </p>
         ) : (
           <PostsGrid>
             {postsFiltrados.map((p) => (
               <PostCard key={p._id} to={`/post/${p._id}`}>
-                <h3>{p.title}</h3>
-                <p>
+                <Tag>ARTIGO</Tag>
+                <Title>{p.title}</Title>
+                <Excerpt>
                   {p.content.length > 150
                     ? p.content.slice(0, 150) + "..."
                     : p.content}
-                </p>
+                </Excerpt>
+                <Meta>
+                  <span>👤 {p.author ?? "Prof. Desconhecido"}</span>•{" "}
+                  <span>
+                    {p.publicationDate? new Date(new Date(p.publicationDate).getTime() + new Date(p.publicationDate).getTimezoneOffset() * 60000).toLocaleDateString("pt-BR"): "—"}
+                  </span>
+                </Meta>
+                <ReadMore>Ler Completo</ReadMore>
               </PostCard>
             ))}
           </PostsGrid>

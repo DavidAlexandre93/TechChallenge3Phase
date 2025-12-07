@@ -1,115 +1,112 @@
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { BookOpen } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useSearch } from "@/hooks/useSearch";
 
 const HeaderContainer = styled.header`
   width: 100%;
-  background: ${({ theme }) => theme.colors.background};
+  background: ${({ theme }) => theme.colors.card};
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+  padding: 10px 40px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  padding: 0.8rem 2rem;
-  position: sticky;
-  top: 0;
-  z-index: 100;
 `;
 
-const Logo = styled.div`
+const Logo = styled(Link)`
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 1.2rem;
+  gap: 6px;
+  font-size: 1.1rem;
   font-weight: 700;
-  color: ${({ theme }) => theme.colors.primary};
+  color: #2563eb;
+  text-decoration: none;
+
+  svg {
+    color: #2563eb;
+  }
 `;
 
-const NavButtons = styled.div`
+const Nav = styled.nav`
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 14px;
 
   a {
-    font-size: 0.9rem;
     text-decoration: none;
-    font-weight: 500;
     color: ${({ theme }) => theme.colors.text};
-    background: ${({ theme }) => theme.colors.card};
-    padding: 0.4rem 0.9rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 6px 12px;
     border-radius: 8px;
-    border: 1px solid ${({ theme }) => theme.colors.border};
-    transition: all 0.25s ease;
+    transition: all 0.2s ease;
 
     &:hover {
-      background: ${({ theme }) => theme.colors.primary};
-      color: white;
+      background: ${({ theme }) => theme.colors.background};
+    }
+
+    &.active {
+      background: ${({ theme }) => theme.colors.background};
+      color: #2563eb;
+      font-weight: 600;
     }
   }
 `;
 
-/* 🔵 Botão azul fixo (independente do tema) */
-const ProfessorButton = styled(Link)`
-  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
-  color: #ffffff !important;
+const Button = styled.button<{ primary?: boolean }>`
+  background: ${({ primary }) => (primary ? "#2563eb" : "transparent")};
+  color: ${({ primary }) => (primary ? "white" : "#6b7280")};
   font-weight: 600;
-  text-decoration: none;
-  border: none !important;
-  border-radius: 10px;
-  padding: 0.5rem 1.2rem;
-  font-size: 0.95rem;
-  letter-spacing: 0.3px;
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
-  transition: all 0.25s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+  padding: 7px 16px;
+  border: ${({ primary }) => (primary ? "none" : "1px solid #e5e7eb")};
+  border-radius: 8px;
   cursor: pointer;
+  transition: all 0.2s ease;
 
   &:hover {
-    background: linear-gradient(135deg, #1e40af, #1d4ed8) !important;
-    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.45);
-    transform: translateY(-2px);
-  }
-
-  &:active {
-    transform: translateY(0);
+    opacity: 0.9;
+    transform: translateY(-1px);
   }
 `;
 
 export function Header() {
   const { user, logout } = useAuth();
-  const { setSearchTerm } = useSearch();
+  const navigate = useNavigate();
 
-  const handleLogout = () => logout();
-  const handleInicioClick = () => setSearchTerm("");
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
   return (
     <HeaderContainer>
-      {/* --- LOGO --- */}
-      <Logo>
-        <span role="img" aria-label="book">📘</span>
+      <Logo to="/">
+        <BookOpen size={20} />
         TechBlog
       </Logo>
 
-      {/* --- NAVIGATION BUTTONS --- */}
-      <NavButtons>
-        <Link to="/" onClick={handleInicioClick}>
+      <Nav>
+        <Link to="/" className="active">
           Início
         </Link>
 
-        {/* 🔵 Exibe botão azul */}
-        {!user ? (
-          <ProfessorButton to="/login">Área do Professor</ProfessorButton>
-        ) : user.role === "TEACHER" ? (
-          <ProfessorButton to="/create">Área do Professor</ProfessorButton>
-        ) : (
-          <Link to="/" onClick={handleLogout}>
-            Sair
-          </Link>
+        {!user && (
+          <Button primary onClick={() => navigate("/login")}>
+            Área do Professor
+          </Button>
         )}
-      </NavButtons>
+
+        {user && (
+          <>
+            <Link to="/dashboard">Dashboard</Link>
+            <span style={{ color: "#6b7280", margin: "0 6px" }}>|</span>
+            <span style={{ color: "#374151", fontSize: "0.9rem" }}>
+              👤 Olá, {user.name?.split(" ")[0] || "Professor"}
+            </span>
+            <Button onClick={handleLogout}>Sair</Button>
+          </>
+        )}
+      </Nav>
     </HeaderContainer>
   );
 }

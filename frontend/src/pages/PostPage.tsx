@@ -1,75 +1,46 @@
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { getPostById, updatePost } from "@/api/postService";
-import type { Post } from "@/models/postModel";
+import { getPostById } from "@/api/postService";
 import { useAuth } from "@/hooks/useAuth";
+import type { Post } from "@/models/postModel";
 import styled from "styled-components";
 
-const PostContainer = styled.div`
-  max-width: 800px;
-  margin: 40px auto;
-  background: ${({ theme }) => theme.colors.card};
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-  padding: 2rem 2.5rem;
-  color: ${({ theme }) => theme.colors.text};
-`;
-
-const PostTitle = styled.h1`
-  font-size: 2rem;
-  font-weight: 700;
-  color: ${({ theme }) => theme.colors.primary};
-  margin-bottom: 1rem;
-`;
-
-const PostContent = styled.p`
-  font-size: 1.05rem;
-  line-height: 1.7;
-  margin-bottom: 2rem;
-  color: ${({ theme }) => theme.colors.text};
-`;
-
-const PostMeta = styled.div`
-  font-size: 0.9rem;
-  color: ${({ theme }) => theme.colors.secondary};
-  margin-top: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-`;
-
-const PostActions = styled.div`
+const Container = styled.div`
   display: flex;
   justify-content: center;
-  gap: 10px;
-  margin-top: 2rem;
+  align-items: center;
+  flex-direction: column;
+  padding: 40px 20px;
+  min-height: 80vh;
+`;
 
-  button {
-    padding: 10px 18px;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s ease;
-  }
+const Card = styled.div`
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 30px 40px;
+  max-width: 700px;
+  width: 100%;
+`;
 
-  .btn-primary {
-    background-color: ${({ theme }) => theme.colors.primary};
-    color: white;
-  }
+const Title = styled.h1`
+  color: #1e3a8a;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+`;
 
-  .btn-danger {
-    background-color: #e74c3c;
-    color: white;
-  }
+const Content = styled.p`
+  color: #374151;
+  line-height: 1.6;
+  font-size: 1.05rem;
+  margin-bottom: 20px;
+`;
 
-  .btn-primary:hover {
-    opacity: 0.9;
-  }
-
-  .btn-danger:hover {
-    opacity: 0.9;
-  }
+const Meta = styled.div`
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
 `;
 
 export function PostPage() {
@@ -79,48 +50,48 @@ export function PostPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (id) getPostById(id).then(setPost);
+    if (id) {
+      getPostById(id)
+        .then((res) => {
+          if (!res) {
+            console.error("⚠️ Nenhum post encontrado!");
+          }
+          setPost(res);
+        })
+        .catch((err) => {
+          console.error("🚨 Erro ao buscar post:", err);
+        });
+    } else {
+      console.error("❌ ID não encontrado na URL!");
+    }
   }, [id]);
 
-  if (!post) return <p style={{ textAlign: "center", marginTop: "50px" }}>Carregando...</p>;
-
-  async function handleDelete() {
-    if (!post) return;
-    if (!confirm("Tem certeza que deseja deletar este post?")) return;
-
-    await updatePost(post._id, {
-      ...post,
-      status: "deletado",
-      publicationDate: null,
-      updatedAt: new Date()
-    });
-
-    navigate("/");
+  if (!post) {
+    return (
+      <Container>
+        <p>Carregando postagem...</p>
+      </Container>
+    );
   }
 
   return (
-    <PostContainer>
-      <PostTitle>{post.title}</PostTitle>
-      <PostContent>{post.content}</PostContent>
+    <Container>
+      <Card>
+        <Title>{post.title}</Title>
+        <Content>{post.content}</Content>
 
-      <PostMeta>
-        <span><strong>Autor:</strong> {post.author ?? "Autor Desconhecido"}</span>
-        {user?.role === "TEACHER" && (
-          <span>
-            <strong>Status:</strong> {post.status} — Atualizado em:{" "}
-            {new Date(post.updatedAt).toLocaleDateString("pt-BR")}
-          </span>
-        )}
-      </PostMeta>
+        <Meta>
+          <strong>Autor:</strong> {post.author ?? "Desconhecido"} <br />
+          <strong>Status:</strong> {post.status} <br />
+          <strong>Publicado em:</strong>{" "}
+          {post.publicationDate
+            ? new Date(post.publicationDate).toLocaleDateString("pt-BR")
+            : "—"}
+        </Meta>
 
-      {user?.role === "TEACHER" && (
-        <PostActions>
-          <Link to={`/edit/${post._id}`}>
-            <button className="btn-primary">Editar</button>
-          </Link>
-          <button onClick={handleDelete} className="btn-danger">Excluir</button>
-        </PostActions>
-      )}
-    </PostContainer>
+        {/* Exibe os botões APENAS para professores logados */}
+        
+      </Card>
+    </Container>
   );
 }
