@@ -1,123 +1,115 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { SearchBar } from "@/components/Search";
-import { useSearch } from "@/hooks/useSearch";
 import { useAuth } from "@/hooks/useAuth";
+import { useSearch } from "@/hooks/useSearch";
 
-const HeaderBar = styled.header`
-  background: ${({ theme }) => theme.colors.primary};
-  color: white;
-  padding: 10px 20px;
+const HeaderContainer = styled.header`
+  width: 100%;
+  background: ${({ theme }) => theme.colors.background};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-  position: fixed;
-  top: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 900px;
-  border-radius: 8px;
-  z-index: 1000;
-  
-  nav {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-  }
+  padding: 0.8rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+`;
 
-  @media (max-width: 980px) {
-    width: calc(100% - 2rem);
-    gap: 10px;
-    padding: 10px;
+const Logo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.primary};
+`;
+
+const NavButtons = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+
+  a {
+    font-size: 0.9rem;
+    text-decoration: none;
+    font-weight: 500;
+    color: ${({ theme }) => theme.colors.text};
+    background: ${({ theme }) => theme.colors.card};
+    padding: 0.4rem 0.9rem;
+    border-radius: 8px;
+    border: 1px solid ${({ theme }) => theme.colors.border};
+    transition: all 0.25s ease;
+
+    &:hover {
+      background: ${({ theme }) => theme.colors.primary};
+      color: white;
+    }
   }
 `;
 
-const ThemeButton = styled.button`
-  background: ${({ theme }) => theme.colors.button.primary};
-  border: 1px solid white;
-  color: ${({ theme }) => theme.colors.button.secondary};
-  font-size: 0.9rem;
-  padding: 6px 10px;
-  border-radius: 4px;
-  margin-left: 10px;
+/* 🔵 Botão azul fixo (independente do tema) */
+const ProfessorButton = styled(Link)`
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  text-decoration: none;
+  border: none !important;
+  border-radius: 10px;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
 
-  @media (max-width: 600px) {
-    display: none;
-    };
+  &:hover {
+    background: linear-gradient(135deg, #1e40af, #1d4ed8) !important;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.45);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
 `;
 
-export function Header({
-  isDarkMode,
-  toggleTheme,
-}: {
-  isDarkMode: boolean;
-  toggleTheme: () => void;
-}) {
+export function Header() {
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
   const { setSearchTerm } = useSearch();
-  
-  const [textoInicio, setTextoInicio] = useState<string>("Página inicial");
-  const [textoThemeButtonDark, setTextoThemeButtonDark] = useState<string>("🌙 Escuro");
-  const [textoThemeButtonLight, setTextoThemeButtonLight] = useState<string>("☀️ Claro");
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 600) {
-        setTextoInicio("Início");
-        setTextoThemeButtonDark("🌙");
-        setTextoThemeButtonLight("☀️");
-      } else {
-        setTextoInicio("Página inicial");
-        setTextoThemeButtonDark("🌙 Escuro");
-        setTextoThemeButtonLight("☀️ Claro");
-      }
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  const handleLogout = () => {
-    logout();
-    navigate("/");
-  };
-
-  const handleInicioClick = () => { setSearchTerm(""); };
+  const handleLogout = () => logout();
+  const handleInicioClick = () => setSearchTerm("");
 
   return (
-    <HeaderBar>
-      <nav>
-        <Link to="/" style={{ color: "white" }} onClick={handleInicioClick}>
-          {textoInicio}
+    <HeaderContainer>
+      {/* --- LOGO --- */}
+      <Logo>
+        <span role="img" aria-label="book">📘</span>
+        TechBlog
+      </Logo>
+
+      {/* --- NAVIGATION BUTTONS --- */}
+      <NavButtons>
+        <Link to="/" onClick={handleInicioClick}>
+          Início
         </Link>
-      </nav>
 
-      <SearchBar />
-
-      <div>
-        {user ? (
-          <>
-            <Link to="/" onClick={handleLogout} style={{ color: "white" }}>
-              Sair
-            </Link>
-          </>
+        {/* 🔵 Exibe botão azul */}
+        {!user ? (
+          <ProfessorButton to="/login">Área do Professor</ProfessorButton>
+        ) : user.role === "TEACHER" ? (
+          <ProfessorButton to="/create">Área do Professor</ProfessorButton>
         ) : (
-          <Link to="/login" style={{ color: "white" }}>
-            Entrar
+          <Link to="/" onClick={handleLogout}>
+            Sair
           </Link>
         )}
-
-        <ThemeButton onClick={toggleTheme}>
-          {isDarkMode ? textoThemeButtonDark : textoThemeButtonLight}
-        </ThemeButton>
-      </div>
-    </HeaderBar >
+      </NavButtons>
+    </HeaderContainer>
   );
 }

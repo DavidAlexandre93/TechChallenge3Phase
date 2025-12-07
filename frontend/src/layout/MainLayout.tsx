@@ -1,17 +1,17 @@
+import { Outlet } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
-import { Header } from "@/pages/Header";
 import { GlobalStyle } from "@/styles/GlobalStyle";
-import { lightTheme, darkTheme } from "@/styles/theme";
-import { useState } from "react";
-
+import { lightTheme } from "@/styles/theme";
+import { Footer } from "@/components/Footer";
 
 export function MainLayout() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
   return (
-    <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
+    <ThemeProvider theme={lightTheme}>
       <GlobalStyle />
-        <Header isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
+      <main style={{ margin: 0, padding: 0 }}>
+        <Outlet />
+      </main>
+      <Footer />
     </ThemeProvider>
   );
 }

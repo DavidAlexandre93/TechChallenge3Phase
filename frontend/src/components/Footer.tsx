@@ -32,37 +32,11 @@ export function Footer() {
       © {new Date().getFullYear()}{" "}
       {isMobile ? (
         <>
-          Plataforma Educacional <br /> Desenvolvido por Herik Ribeiro
+          Plataforma Educacional <br /> Desenvolvido pelo Grupo 20
         </>
       ) : (
-        <>Plataforma Educacional — Desenvolvido por Herik Ribeiro</>
+        <>Plataforma Educacional — Desenvolvido pelo Grupo 20</>
       )}
     </FooterBar>
   );
 }
-
-// export function Footer() {
-//   const [textoFooter, setTextoFooter] = useState<string>("Plataforma Educacional — Desenvolvido por Herik Ribeiro");
-
-
-//   useEffect(() => {
-//       const handleResize = () => {
-//         if (window.innerWidth < 550) {
-//           setTextoFooter(`Plataforma Educacional <br /> Desenvolvido por Herik Ribeiro`);
-          
-//         } else {
-//           setTextoFooter("Plataforma Educacional — Desenvolvido por Herik Ribeiro");
-//         }
-//       };
-  
-//       handleResize();
-//       window.addEventListener("resize", handleResize);
-  
-//       return () => window.removeEventListener("resize", handleResize);
-//     }, []);
-//   return (
-//     <FooterBar>
-//       © {new Date().getFullYear()} {textoFooter}
-//     </FooterBar>
-//   );
-// }

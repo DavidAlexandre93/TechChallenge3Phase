@@ -8,12 +8,13 @@
     "types": ["vite/client", "node"],
     "skipLibCheck": true,
 
-    "baseUrl": ".",
+    /* ✅ Caminhos e alias */
+    "baseUrl": "src",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["*"]
     },
 
-    /* Bundler mode */
+    /* ✅ Modo de empacotamento (Vite/React moderno) */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
@@ -21,7 +22,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* Linting */
+    /* ✅ Regras de qualidade */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,

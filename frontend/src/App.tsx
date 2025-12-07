@@ -1,49 +1,38 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { useState } from 'react'
-import '@/App.css'
-import { ThemeProvider } from "styled-components";
-import { GlobalStyle } from "@/styles/GlobalStyle";
-import { lightTheme, darkTheme } from "@/styles/theme";
-import { AuthProvider } from '@/context/AuthProvider';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/context/AuthProvider";
 import { SearchProvider } from "@/context/SearchProvider";
-import { Header } from '@/components/Header';
-import { Home } from "@/pages/Home.tsx";
-import { PostPage } from '@/pages/PostPage';
-import { Login } from '@/pages/Login.tsx';
+import { PrivateRoute } from "@/components/PrivateRoute";
+import { Home } from "@/pages/Home";
+import { PostPage } from "@/pages/PostPage";
+import { Login } from "@/pages/Login";
 import { CreatePost } from "@/pages/CreatePost";
 import { EditPost } from "@/pages/EditPost";
-import { Footer } from '@/components/Footer';
-import { PrivateRoute } from '@/components/PrivateRoute';
+import { MainLayout } from "@/layout/MainLayout";
+import { MainLayoutWithHeader } from "@/layout/MainLayoutWithHeader";
 
 function App() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
   return (
-    <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
-      <AuthProvider>
+    <AuthProvider>
       <SearchProvider>
-        <GlobalStyle />
         <BrowserRouter>
-          <Header isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} >
-          </Header>
-
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/post/:id" element={<PostPage />} />
-            <Route path="/login" element={<Login />} />
+            {/* 🔓 Páginas sem Header */}
+            <Route element={<MainLayout />}>
+              <Route path="/login" element={<Login />} />
+            </Route>
 
-            {/* Páginas protegidas */}
-            <Route path="/create" element={<PrivateRoute><CreatePost /></PrivateRoute>} />
-            <Route path="/edit/:id" element={<PrivateRoute><EditPost /></PrivateRoute>} />
+            {/* 🔒 Páginas com Header */}
+            <Route element={<MainLayoutWithHeader />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/post/:id" element={<PostPage />} />
+              <Route path="/create" element={<PrivateRoute><CreatePost /></PrivateRoute>} />
+              <Route path="/edit/:id" element={<PrivateRoute><EditPost /></PrivateRoute>} />
+            </Route>
           </Routes>
-
-          <Footer></Footer>
         </BrowserRouter>
       </SearchProvider>
-      </AuthProvider>
-    </ThemeProvider>
-
-  )
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;
