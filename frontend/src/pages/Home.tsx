@@ -22,12 +22,12 @@ const Hero = styled.section`
   color: white;
   border-radius: 12px;
   padding: 50px 60px;
-  width: 100%;
+  width: calc(100% - 40px);
   max-width: 1100px;
   text-align: left;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
   margin-top: 40px;
-  margin-bottom: 35px; /* ⬅️ Reduzido (era 50–60px) */
+  margin-bottom: 35px;
 
   h1 {
     font-size: 2.2rem;
@@ -37,28 +37,31 @@ const Hero = styled.section`
 
   p {
     color: #e0e7ff;
-    margin-bottom: 20px; /* ⬅️ Menor espaçamento antes da busca */
+    margin-bottom: 20px;
     font-size: 1.05rem;
   }
 
   .search-wrapper {
     background-color: white;
     border-radius: 12px;
-    max-width: 500px;
-    padding: 8px 16px;
+    max-width: 470px;
+    padding: 4px 8px;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
   }
 
   @media (max-width: 768px) {
     text-align: center;
     padding: 40px 25px;
+
+    .search-wrapper {
+      margin: 0 auto;
+    }
   }
 `;
 
 const PostsSection = styled.section`
   width: 100%;
   max-width: 1100px;
-  padding: 0 20px 60px 20px; /* ⬅️ Espaço controlado até o footer */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -66,10 +69,13 @@ const PostsSection = styled.section`
 
 const PostsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
-  gap: 20px; /* ⬅️ Antes: 25px */
-  width: 100%;
-  margin-top: 10px; /* ⬅️ aproxima os cards do título */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  width: calc(100% - 40px);
+
+  @media (max-width: 375px) {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
 `;
 
 

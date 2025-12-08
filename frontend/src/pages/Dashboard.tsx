@@ -12,6 +12,10 @@ const Container = styled.div`
   margin: 40px auto;
   padding: 0 20px;
   min-height: 80vh;
+
+  @media (max-width: 425px) {
+    padding: 0 10px;
+  }
 `;
 
 const HeaderSection = styled.div`
@@ -31,6 +35,16 @@ const HeaderSection = styled.div`
     font-size: 0.95rem;
     margin-top: 2px;
   }
+
+  @media (max-width: 425px) {
+    h1 {
+      font-size: 1.5rem;
+    }
+
+    p {
+      font-size: 0.85rem;
+    }
+  }
 `;
 
 const NewPostButton = styled(Link)`
@@ -41,16 +55,25 @@ const NewPostButton = styled(Link)`
   color: white;
   font-weight: 600;
   border-radius: 10px;
-  padding: 0.55rem 1.1rem;
+  padding: 8px;
   font-size: 0.95rem;
   text-decoration: none;
   transition: all 0.25s ease;
   box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
 
+  svg {
+    flex-shrink: 0;
+  }
+
   &:hover {
     background: linear-gradient(135deg, #1e40af, #1d4ed8);
     box-shadow: 0 4px 10px rgba(37, 99, 235, 0.45);
     transform: translateY(-2px);
+  }
+
+  @media (max-width: 425px) {
+    font-size: 0.85rem;
+    padding: 6px;
   }
 `;
 
@@ -72,6 +95,16 @@ const Th = styled.th`
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
   text-transform: uppercase;
   letter-spacing: 0.03rem;
+
+  @media (max-width: 700px) {
+    font-size: 0.8rem;
+    padding: 10px;
+  }
+
+  @media (max-width: 500px) {
+    font-size: 0.7rem;
+    padding: 4px;
+  }
 `;
 
 const Td = styled.td`
@@ -85,6 +118,16 @@ const Td = styled.td`
     font-weight: 600;
     color: ${({ theme }) => theme.colors.primary};
   }
+
+  @media (max-width: 700px) {
+    font-size: 0.8rem;
+    padding: 10px;
+  }
+
+  @media (max-width: 500px) {
+    font-size: 0.7rem;
+    padding: 4px;
+  }
 `;
 
 const Actions = styled.div`
@@ -95,6 +138,11 @@ const Actions = styled.div`
   svg {
     cursor: pointer;
     transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  svg:hover {
+    transform: scale(1.1)
   }
 
   .edit {
@@ -114,11 +162,22 @@ const Actions = styled.div`
     color: #dc2626;
     transform: scale(1.1);
   }
+
+  @media (max-width: 700px) {
+    gap: 10px;
+  }
+
+  @media (max-width: 375px) {
+      flex-direction: column;
+      gap: 6px;
+    }
 `;
+
 
 export function Dashboard() {
   const { user } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -134,6 +193,17 @@ export function Dashboard() {
     });
   }, [user]);
 
+  useEffect(() => {
+    const checkScreen = () => {
+      setIsMobile(window.innerWidth <= 425);
+    };
+
+    checkScreen();
+    window.addEventListener("resize", checkScreen);
+
+    return () => window.removeEventListener("resize", checkScreen);
+  }, []);
+
   async function handleDelete(id: string) {
     if (!confirm("Tem certeza que deseja excluir este post?")) return;
     await deletePost(id);
@@ -146,6 +216,15 @@ export function Dashboard() {
       return;
     }
     navigate(`/edit/${id}`);
+  }
+
+  function formatDate(dateString: Date | string): string {
+    const full = new Date(dateString).toLocaleDateString("pt-BR");
+
+    if (!isMobile) return full;
+
+    // "04/10/2025" → "04/10/25"
+    return full.replace(/(\d{4})$/, (yy) => yy.slice(-2));
   }
 
   return (
@@ -177,7 +256,7 @@ export function Dashboard() {
               <Td>{post.author}</Td>
               <Td>
                 {post.publicationDate
-                  ? new Date(post.publicationDate).toLocaleDateString("pt-BR")
+                  ? formatDate(post.publicationDate)
                   : "—"}
               </Td>
               <Td>{post.status ?? "—"}</Td>

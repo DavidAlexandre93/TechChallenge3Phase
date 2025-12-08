@@ -4,15 +4,18 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import styled from "styled-components";
 
-// 🧱 Estilos
 const Container = styled.div`
-  width: 100%;
+  width: calc(100% - 40px);
   max-width: 700px;
   margin: 60px auto;
   background: ${({ theme }) => theme.colors.card};
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  padding: 40px 50px;
+  padding: 20px 30px;
+
+  @media (max-width: 375px) {
+    padding: 12px 16px;
+  }
 `;
 
 const HeaderRow = styled.div`
@@ -75,6 +78,10 @@ const ButtonRow = styled.div`
   justify-content: flex-end;
   gap: 10px;
   margin-top: 25px;
+
+  @media (max-width: 500px) {
+    justify-content: center;
+  }
 `;
 
 const Button = styled.button<{ variant?: "primary" | "ghost" }>`
@@ -97,9 +104,12 @@ const Button = styled.button<{ variant?: "primary" | "ghost" }>`
     opacity: 0.6;
     cursor: not-allowed;
   }
+
+  @media (max-width: 400px) {
+    padding: 6px;
+  }
 `;
 
-// 🧩 Componente principal
 export function CreatePost() {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState(useAuth().user?.name || "Autor Desconhecido");

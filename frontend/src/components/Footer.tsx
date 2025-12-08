@@ -65,7 +65,7 @@ export function Footer() {
     <FooterWrapper>
       <LeftText>
         © {new Date().getFullYear()}{" "}
-        Tech Challenge. Desenvolvimento Web Full Stack.
+        - Tech Challenge 3 - Grupo 20.
       </LeftText>
 
       {!isMobile && (

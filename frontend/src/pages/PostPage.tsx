@@ -37,6 +37,14 @@ const Card = styled.div`
   max-width: 750px;
   width: 100%;
   margin-bottom: 30px;
+
+  @media (max-width: 450px) {
+    padding: 20px 25px;
+  }
+
+  @media (max-width: 350px) {
+    padding: 16px;
+  }
 `;
 
 const Header = styled.div`
@@ -46,6 +54,11 @@ const Header = styled.div`
   font-size: 0.9rem;
   color: #6b7280;
   margin-bottom: 20px;
+
+  @media (max-width: 450px) {
+    gap: 4px;
+    margin-bottom: 0;
+  }
 `;
 
 const Tag = styled.span`
@@ -55,6 +68,16 @@ const Tag = styled.span`
   font-size: 0.8rem;
   padding: 4px 10px;
   border-radius: 8px;
+  margin-right: 6px;
+
+
+  @media (max-width: 450px) {
+    padding: 4px;
+  }
+
+  @media (max-width: 375px) {
+    display: none;
+  }
 `;
 
 const Status = styled.span`
@@ -64,6 +87,10 @@ const Status = styled.span`
   font-size: 0.8rem;
   padding: 4px 10px;
   border-radius: 8px;
+
+  @media (max-width: 450px) {
+    padding: 4px;
+  }
 `;
 
 const Dot = styled.span`
@@ -90,6 +117,14 @@ const CommentsSection = styled.div`
   padding: 25px 35px;
   max-width: 750px;
   width: 100%;
+
+  @media (max-width: 450px) {
+    padding: 20px 25px;
+  }
+
+  @media (max-width: 350px) {
+    padding: 16px;
+  }
 `;
 
 const CommentTitle = styled.h2`

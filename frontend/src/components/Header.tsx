@@ -7,10 +7,18 @@ const HeaderContainer = styled.header`
   width: 100%;
   background: ${({ theme }) => theme.colors.card};
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
-  padding: 10px 40px;
+  padding: 10px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  @media (max-width: 500px) {
+    padding: 8px 15px;
+  }
+
+  @media (max-width: 375px) {
+    padding: 8px;
+  }
 `;
 
 const Logo = styled(Link)`
@@ -24,6 +32,19 @@ const Logo = styled(Link)`
 
   svg {
     color: #2563eb;
+  }
+
+  @media (max-width: 500px) {
+    gap: 4px;
+  }
+
+  @media (max-width: 400px) {
+    font-size: 1rem;
+
+    svg {
+    width: 16px;
+    height: 16px;
+    }
   }
 `;
 
@@ -51,13 +72,50 @@ const Nav = styled.nav`
       font-weight: 600;
     }
   }
+
+  @media (max-width: 500px) {
+    gap: 8px;
+
+    a {
+      padding: 4px 8px;
+    }
+  }
+
+  @media (max-width: 425px) {
+    gap: 6px;
+
+    a {
+      padding: 2px 4px;
+    }
+  }
+
+  @media (max-width: 375px) {
+  gap: 3px;
+
+  a,
+  span,
+  button {
+    font-size: 0.8rem !important;
+  }
+
+  button {
+    padding: 3px 6px;
+  }
+
+  span {
+    max-width: 80px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
 `;
 
 const Button = styled.button<{ primary?: boolean }>`
   background: ${({ primary }) => (primary ? "#2563eb" : "transparent")};
   color: ${({ primary }) => (primary ? "white" : "#6b7280")};
   font-weight: 600;
-  padding: 7px 16px;
+  padding: 6px 10px;
   border: ${({ primary }) => (primary ? "none" : "1px solid #e5e7eb")};
   border-radius: 8px;
   cursor: pointer;
@@ -66,6 +124,11 @@ const Button = styled.button<{ primary?: boolean }>`
   &:hover {
     opacity: 0.9;
     transform: translateY(-1px);
+  }
+
+  @media (max-width: 425px) {
+    padding: 4px 6px;
+    font-size: 0.8rem;
   }
 `;
 
@@ -86,9 +149,9 @@ export function Header() {
       </Logo>
 
       <Nav>
-        <Link to="/" className="active">
+        {/* <Link to="/" className="active">
           Início
-        </Link>
+        </Link> */}
 
         {!user && (
           <Button primary onClick={() => navigate("/login")}>
@@ -99,7 +162,7 @@ export function Header() {
         {user && (
           <>
             <Link to="/dashboard">Dashboard</Link>
-            <span style={{ color: "#6b7280", margin: "0 6px" }}>|</span>
+            <span style={{ color: "#6b7280", margin: "0 1px" }}>|</span>
             <span style={{ color: "#374151", fontSize: "0.9rem" }}>
               👤 Olá, {user.name?.split(" ")[0] || "Professor"}
             </span>
