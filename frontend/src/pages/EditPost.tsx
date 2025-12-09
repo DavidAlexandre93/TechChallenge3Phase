@@ -8,7 +8,7 @@ import styled from "styled-components";
 const Container = styled.div`
   width: calc(100% - 40px);
   max-width: 700px;
-  margin: 60px auto;
+  margin: 20px auto 60px auto;
   background: ${({ theme }) => theme.colors.card};
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -67,16 +67,16 @@ const ButtonRow = styled.div`
   }
 `;
 
-const Button = styled.button<{ variant?: "primary" | "danger" | "ghost" }>`
-  background: ${({ variant, theme }) =>
-    variant === "primary"
+const Button = styled.button<{ $variant?: "primary" | "danger" | "ghost" }>`
+  background: ${({ $variant, theme }) =>
+    $variant === "primary"
       ? theme.colors.primary
-      : variant === "danger"
+      : $variant === "danger"
       ? "#ef4444"
       : "transparent"};
-  color: ${({ variant }) => (variant === "ghost" ? "#6b7280" : "white")};
-  border: ${({ variant }) =>
-    variant === "ghost" ? "1px solid #f9fafb" : "none"};
+  color: ${({ $variant }) => ($variant === "ghost" ? "#6b7280" : "white")};
+  border: ${({ $variant }) =>
+    $variant === "ghost" ? "1px solid #f9fafb" : "none"};
   padding: 10px 16px;
   border-radius: 8px;
   font-weight: 600;
@@ -139,7 +139,7 @@ export function EditPost() {
       <Container>
         <h2>Erro</h2>
         <p style={{ color: "red" }}>{error}</p>
-        <Button variant="ghost" onClick={() => navigate("/dashboard")}>
+        <Button $variant="ghost" onClick={() => navigate("/dashboard")}>
           Voltar ao Painel
         </Button>
       </Container>
@@ -167,7 +167,10 @@ export function EditPost() {
         content: post.content ?? "",
         author: post.author ?? "Autor Desconhecido",
         status: post.status ?? "rascunho",
-        publicationDate: post.publicationDate ?? new Date(),
+        publicationDate:
+          post.status === "publicado"
+          ? post.publicationDate
+          : null,
         createdAt: post.createdAt ?? new Date(),
         updatedAt: new Date(),
       });
@@ -205,12 +208,17 @@ export function EditPost() {
   <label>Status</label>
   <select
     value={post.status ?? "rascunho"}
-    onChange={(e) =>
+    onChange={(e) => {
+      const newStatus = e.target.value;
       setPost({
         ...post,
         status: e.target.value as "publicado" | "rascunho" | "deletado",
+        publicationDate:
+        newStatus === "publicado"
+          ? post.publicationDate ?? new Date()
+          : null,
       })
-    }
+    }}
   >
     <option value="publicado">Publicado</option>
     <option value="rascunho">Rascunho</option>
@@ -231,8 +239,11 @@ export function EditPost() {
       setPost({
         ...post,
         publicationDate: e.target.value
-          ? new Date(e.target.value)
-          : post.publicationDate ?? new Date(),
+          ? (() => {
+              const [y, m, d] = e.target.value.split("-").map(Number);
+              return new Date(y, m - 1, d);
+            })()
+          : null,
       })
     }
   />
@@ -248,10 +259,10 @@ export function EditPost() {
       </FormGroup>
 
       <ButtonRow>
-        <Button variant="ghost" onClick={() => navigate(-1)} disabled={isSaving}>
+        <Button $variant="ghost" onClick={() => navigate(-1)} disabled={isSaving}>
           Cancelar
         </Button>
-        <Button variant="primary" onClick={handleSave} disabled={isSaving}>
+        <Button $variant="primary" onClick={handleSave} disabled={isSaving}>
           {isSaving ? "Salvando..." : "Salvar Alterações"}
         </Button>
       </ButtonRow>

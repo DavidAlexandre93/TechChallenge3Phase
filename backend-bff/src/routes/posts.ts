@@ -33,7 +33,7 @@ router.put("/:id", authenticate, authorizeRole("TEACHER"), async (req, res) => {
 // Excluir post com soft delete (apenas TEACHER)
 router.delete("/:id", authenticate, authorizeRole("TEACHER"), async (req, res) => {
   // await Post.findByIdAndDelete(req.params.id);
-  await Post.findById(req.params.id).updateOne({ status: "deletado" });
+  await Post.findById(req.params.id).updateOne({ status: "deletado", publicationDate: null});
   res.json({ message: "Post deletado" });
 });
 

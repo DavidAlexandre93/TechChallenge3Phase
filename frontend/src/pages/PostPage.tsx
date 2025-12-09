@@ -8,7 +8,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px 20px;
+  padding: 20px;
+  padding-bottom: 60px;
   min-height: 100vh;
 `;
 
@@ -19,7 +20,7 @@ const BackLink = styled.button`
   color: #1e3a8a;
   font-size: 0.95rem;
   cursor: pointer;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
   gap: 6px;

@@ -6,21 +6,7 @@ import jwt from "jsonwebtoken";
 const router = Router();
 const SECRET = process.env.JWT_SECRET || "changeme";
 
-// Registro (apenas para testes)
-// router.post("/register", async (req, res) => {
-//   const { name, email, password, role } = req.body;
-//   const hash = await bcrypt.hash(password, 10);
-//   const user = new User({ name, email, password: hash, role });
-//   await user.save();
-//   res.json(user);
-// });
-
-// function senha(s: string) {
-//   return bcrypt.hash(s, 10);
-// }
-
-console.log(bcrypt.hash("senh@", 10));
-
+// bcrypt.hash("senh@", 10).then(console.log);
 
 // Login
 router.post("/login", async (req, res) => {

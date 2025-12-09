@@ -9,12 +9,14 @@ import { Edit2, Trash2, PlusCircle } from "lucide-react";
 const Container = styled.div`
   width: 100%;
   max-width: 1100px;
-  margin: 40px auto;
+  margin: 20px auto 40px auto;
   padding: 0 20px;
   min-height: 80vh;
+  padding-bottom: 20px;
 
   @media (max-width: 425px) {
     padding: 0 10px;
+    padding-bottom: 10px;
   }
 `;
 
@@ -207,7 +209,8 @@ export function Dashboard() {
   async function handleDelete(id: string) {
     if (!confirm("Tem certeza que deseja excluir este post?")) return;
     await deletePost(id);
-    setPosts((prev) => prev.filter((p) => p._id !== id));
+    const updatedPosts = await getAllPosts();
+    setPosts(updatedPosts);
   }
 
   function handleEdit(id?: string) {

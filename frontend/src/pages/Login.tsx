@@ -7,20 +7,43 @@ import { useAuth } from "@/hooks/useAuth";
 
 const PageWrapper = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh; /* ocupa 100% da tela */
-  background: #f3f4f6; /* cor única e suave */
+  height: 100vh;
+  background: #f3f4f6;
+  margin: 0 0 20px 0;
+`;
+
+const BackLink = styled.button`
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: #1e3a8a;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 const Card = styled.div`
   background: white;
   border-radius: 20px;
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.1);
-  padding: 60px 70px;
+  padding: 50px 60px;
   width: 100%;
-  max-width: 460px; /* tamanho do card aumentado */
+  max-width: 460px;
   text-align: center;
+
+  @media (max-width: 425px) {
+    padding: 30px;
+  }
 `;
 
 const IconWrapper = styled.div`
@@ -100,6 +123,10 @@ const Hint = styled.p`
   font-size: 0.9rem;
   color: #6b7280;
   margin-top: 18px;
+
+  @media (max-width: 350px) {
+    font-size: 0.8rem;
+  }
 `;
 
 export function Login() {
@@ -130,6 +157,8 @@ export function Login() {
 
   return (
     <PageWrapper>
+      <BackLink onClick={() => navigate("/")}>← Voltar para Home</BackLink>
+
       <Card>
         <IconWrapper>
           <FiLock />
@@ -154,7 +183,7 @@ export function Login() {
           <button type="submit">Entrar no Sistema</button>
         </Form>
 
-        <Hint>Dica: profx@professor.com / senh@</Hint>
+        <Hint>Dica: jubileu@professor.com / s&nha</Hint>
       </Card>
     </PageWrapper>
   );

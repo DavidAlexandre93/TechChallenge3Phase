@@ -7,14 +7,16 @@ import styled from "styled-components";
 const Container = styled.div`
   width: calc(100% - 40px);
   max-width: 700px;
-  margin: 60px auto;
+  margin: 20px auto 40px auto;
   background: ${({ theme }) => theme.colors.card};
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   padding: 20px 30px;
+  /* margin-bottom: 40px; */
 
   @media (max-width: 375px) {
     padding: 12px 16px;
+    padding-bottom: 60px;
   }
 `;
 
@@ -84,12 +86,12 @@ const ButtonRow = styled.div`
   }
 `;
 
-const Button = styled.button<{ variant?: "primary" | "ghost" }>`
-  background: ${({ variant, theme }) =>
-    variant === "primary" ? theme.colors.primary : "transparent"};
-  color: ${({ variant }) => (variant === "primary" ? "white" : "#6b7280")};
-  border: ${({ variant }) =>
-    variant === "ghost" ? "1px solid #f9fafb" : "none"};
+const Button = styled.button<{ $variant?: "primary" | "ghost" }>`
+  background: ${({ $variant, theme }) =>
+    $variant === "primary" ? theme.colors.primary : "transparent"};
+  color: ${({ $variant }) => ($variant === "primary" ? "white" : "#6b7280")};
+  border: ${({ $variant }) =>
+    $variant === "ghost" ? "1px solid #f9fafb" : "none"};
   padding: 10px 16px;
   border-radius: 8px;
   font-weight: 600;
@@ -174,10 +176,10 @@ export function CreatePost() {
         </FormGroup>
 
         <ButtonRow>
-          <Button type="submit" name="action" value="rascunho" variant="ghost">
+          <Button type="submit" name="action" value="rascunho" $variant="ghost">
             Salvar Rascunho
           </Button>
-          <Button type="submit" name="action" value="publicar" variant="primary">
+          <Button type="submit" name="action" value="publicar" $variant="primary">
             Publicar Post
           </Button>
         </ButtonRow>

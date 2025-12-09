@@ -17,9 +17,9 @@ import { MainLayoutWithHeader } from "@/layout/MainLayoutWithHeader";
 
 function App() {
   return (
+        <BrowserRouter>
     <AuthProvider>
       <SearchProvider>
-        <BrowserRouter>
           <Routes>
             {/* 🔓 Páginas SEM Header */}
             <Route element={<MainLayout />}>
@@ -58,9 +58,9 @@ function App() {
             {/* 🚫 Fallback opcional */}
             {/* <Route path="*" element={<NotFound />} /> */}
           </Routes>
-        </BrowserRouter>
       </SearchProvider>
     </AuthProvider>
+        </BrowserRouter>
   );
 }
 

@@ -11,6 +11,8 @@ const HeaderContainer = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: sticky;
+  top: 0;
 
   @media (max-width: 500px) {
     padding: 8px 15px;
@@ -111,12 +113,12 @@ const Nav = styled.nav`
 }
 `;
 
-const Button = styled.button<{ primary?: boolean }>`
-  background: ${({ primary }) => (primary ? "#2563eb" : "transparent")};
-  color: ${({ primary }) => (primary ? "white" : "#6b7280")};
+const Button = styled.button<{ $primary?: boolean }>`
+  background: ${({ $primary }) => ($primary ? "#2563eb" : "transparent")};
+  color: ${({ $primary }) => ($primary ? "white" : "#6b7280")};
   font-weight: 600;
   padding: 6px 10px;
-  border: ${({ primary }) => (primary ? "none" : "1px solid #e5e7eb")};
+  border: ${({ $primary }) => ($primary ? "none" : "1px solid #e5e7eb")};
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -154,7 +156,7 @@ export function Header() {
         </Link> */}
 
         {!user && (
-          <Button primary onClick={() => navigate("/login")}>
+          <Button $primary onClick={() => navigate("/login")}>
             Área do Professor
           </Button>
         )}

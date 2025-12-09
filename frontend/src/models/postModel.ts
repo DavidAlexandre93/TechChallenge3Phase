@@ -6,7 +6,7 @@ interface Post {
   author: string;
   createdAt: Date;
   updatedAt: Date;
-  publicationDate?: Date;
+  publicationDate?: Date | null;
 }
 
 export type { Post };

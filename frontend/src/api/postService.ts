@@ -30,7 +30,7 @@ export async function updatePost(id: string, data: {
   content: string,
   author: string,
   status: string,
-  publicationDate: Date | null,
+  publicationDate: Date | null | undefined,
   createdAt: Date,
   updatedAt: Date
 }

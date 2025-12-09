@@ -12,8 +12,12 @@ const FooterWrapper = styled.footer`
   align-items: center;
   font-size: 0.9rem;
   color: #6b7280;
-  position: relative;
+  /* position: absolute;
+  bottom: 0; */
+  position: fixed;
   bottom: 0;
+  left: 0;
+  z-index: 50;
 `;
 
 const LeftText = styled.div`
