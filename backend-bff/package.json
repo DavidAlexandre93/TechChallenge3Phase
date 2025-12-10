@@ -8,7 +8,8 @@
     "build": "tsc",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "start": "node dist/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --detectOpenHandles --runInBand",
+    "test:watch": "NODE_ENV=test jest --watch"
   },
   "keywords": [
     "express",
@@ -32,8 +33,16 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/jest": "^30.0.0",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24.10.2",
+    "@types/supertest": "^6.0.3",
+    "jest": "^30.2.0",
+    "mongodb-memory-server": "^10.4.1",
+    "supertest": "^7.1.4",
+    "ts-jest": "^29.4.6",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3"
-  }
+  },
+  "types": "./dist/server.d.ts"
 }
