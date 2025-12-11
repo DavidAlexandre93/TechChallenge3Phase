@@ -268,11 +268,13 @@ export function Dashboard() {
                   <Edit2
                     size={18}
                     className="edit"
+                    data-testid="edit-icon"
                     onClick={() => handleEdit(post._id)}
                   />
                   <Trash2
                     size={18}
                     className="delete"
+                    data-testid="delete-icon"
                     onClick={() => handleDelete(post._id!)}
                   />
                 </Actions>

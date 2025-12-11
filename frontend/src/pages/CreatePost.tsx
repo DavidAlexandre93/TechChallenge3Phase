@@ -121,9 +121,11 @@ export function CreatePost() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    const form = e.currentTarget;
-    const action = (form.elements.namedItem("action") as HTMLInputElement)?.value;
-    const finalStatus = action === "publicar" ? "publicado" : "rascunho";
+    // const form = e.currentTarget;
+    // const action = (form.elements.namedItem("action") as HTMLInputElement)?.value;
+    // const finalStatus = action === "publicar" ? "publicado" : "rascunho";
+    const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement;
+    const finalStatus = submitter.value === "publicar" ? "publicado" : "rascunho";
 
     await createPost({
       title,

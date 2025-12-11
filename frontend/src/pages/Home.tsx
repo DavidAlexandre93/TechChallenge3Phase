@@ -160,7 +160,8 @@ export function Home() {
     const termo = searchTerm.toLowerCase();
     const matches =
       p.title.toLowerCase().includes(termo) ||
-      p.content.toLowerCase().includes(termo);
+      p.content.toLowerCase().includes(termo) ||
+      p.author.toLowerCase().includes(termo);
     if (user?.role === "TEACHER") return matches;
     return matches && p.status === "publicado";
   });
