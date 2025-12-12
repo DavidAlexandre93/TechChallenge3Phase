@@ -1,0 +1,28 @@
+name: CI
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar dependências backend
+        run: |
+          cd backend-bff
+          npm install
+      - name: Instalar dependências frontend
+        run: |
+          cd frontend
+          npm install
+      - name: Rodar testes backend
+        run: |
+          cd backend-bff
+          npm test
+      - name: Rodar testes frontend
+        run: |
+          cd frontend
+          npm run test

@@ -1,0 +1,32 @@
+name: 🔍 Teste CI com Docker
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch: # permite rodar manualmente pelo GitHub
+
+jobs:
+  docker-build-test:
+    name: Build & Test Containers
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🧩 Checkout código
+        uses: actions/checkout@v4
+
+      - name: 🐳 Configurar Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 📦 Build backend (teste)
+        run: |
+          docker build -t backend-test ./backend-bff
+
+      - name: 📦 Build frontend (teste)
+        run: |
+          docker build -t frontend-test ./frontend
+
+      - name: ✅ Verificar containers
+        run: |
+          docker images

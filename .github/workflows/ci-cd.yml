@@ -1,0 +1,80 @@
+name: CI/CD - TechChallenge3Phase
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-test:
+    name: 🧩 Build & Test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: 🔽 Checkout repositório
+        uses: actions/checkout@v4
+
+      - name: 🧰 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      # ---------- FRONTEND ----------
+      - name: 📦 Instalar dependências (Frontend)
+        working-directory: ./frontend
+        run: npm install
+
+      - name: 🧪 Rodar testes (Frontend)
+        working-directory: ./frontend
+        run: npm test --if-present
+
+      - name: 🏗️ Build (Frontend)
+        working-directory: ./frontend
+        run: npm run build
+
+      # ---------- BACKEND ----------
+      - name: 📦 Instalar dependências (Backend)
+        working-directory: ./backend-bff
+        run: npm install
+
+      - name: 🧪 Rodar testes (Backend)
+        working-directory: ./backend-bff
+        run: npm test --if-present
+
+      - name: ✅ Verificar build (Backend)
+        working-directory: ./backend-bff
+        run: npm run build --if-present
+
+  # 🚀 DEPLOY
+  deploy:
+    name: 🚀 Deploy automático
+    needs: build-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔽 Checkout repositório
+        uses: actions/checkout@v4
+
+      # DEPLOY DO FRONTEND (Netlify)
+      - name: 🌐 Deploy para Netlify
+        uses: nwtgck/actions-netlify@v2
+        with:
+          publish-dir: ./frontend/dist
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          netlify-auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          netlify-site-id: ${{ secrets.NETLIFY_SITE_ID }}
+        env:
+          NODE_ENV: production
+
+      # DEPLOY DO BACKEND (Render ou Railway)
+      - name: ☁️ Deploy Backend (Render)
+        if: success()
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
