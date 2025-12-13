@@ -86,7 +86,7 @@ export function SearchBar() {
 
     <SearchContainer>
       <SearchIcon />
-      <SearchInput ref={inputRef} type="text" placeholder="Pesquisar..." id="search-bar" onChange={handleChange} value={searchTerm}/>
+      <SearchInput ref={inputRef} type="text" placeholder="Pesquisar..." id="search-bar" onChange={handleChange} value={searchTerm} />
       {searchTerm && <ClearIcon onClick={handleClear} title="Limpar busca" />}
     </SearchContainer>
   );

@@ -1,8 +1,18 @@
-# backend-bff/Dockerfile
-FROM node:22-alpine
+FROM node:18
+
 WORKDIR /app
+
 COPY package*.json ./
+COPY tsconfig.json ./
+
 RUN npm install
+
 COPY . .
-EXPOSE 3000
-CMD ["npm", "run", "dev"]
+
+RUN npm run build
+
+EXPOSE 4000
+
+ENTRYPOINT ["npm"]
+
+CMD ["start"]

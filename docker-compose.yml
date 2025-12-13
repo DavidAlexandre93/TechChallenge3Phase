@@ -1,0 +1,45 @@
+# version: "3.8"
+
+services:
+  mongo:
+    image: mongo:6
+    container_name: TC3mongo
+    command: ["mongod", "--logpath", "/dev/null", "--logappend"]
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend-bff
+    container_name: TC3backend
+    env_file:
+      - ./backend-bff/.env
+    ports:
+      - "4000:4000"
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:4000/health || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build: ./frontend
+    container_name: TC3frontend
+    ports:
+      - "5173:80"
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:

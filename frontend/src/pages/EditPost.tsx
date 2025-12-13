@@ -72,8 +72,8 @@ const Button = styled.button<{ $variant?: "primary" | "danger" | "ghost" }>`
     $variant === "primary"
       ? theme.colors.primary
       : $variant === "danger"
-      ? "#ef4444"
-      : "transparent"};
+        ? "#ef4444"
+        : "transparent"};
   color: ${({ $variant }) => ($variant === "ghost" ? "#6b7280" : "white")};
   border: ${({ $variant }) =>
     $variant === "ghost" ? "1px solid #f9fafb" : "none"};
@@ -169,8 +169,8 @@ export function EditPost() {
         status: post.status ?? "rascunho",
         publicationDate:
           post.status === "publicado"
-          ? post.publicationDate
-          : null,
+            ? post.publicationDate
+            : null,
         createdAt: post.createdAt ?? new Date(),
         updatedAt: new Date(),
       });
@@ -204,50 +204,50 @@ export function EditPost() {
         />
       </FormGroup>
 
-   <FormGroup>
-  <label>Status</label>
-  <select
-    value={post.status ?? "rascunho"}
-    onChange={(e) => {
-      const newStatus = e.target.value;
-      setPost({
-        ...post,
-        status: e.target.value as "publicado" | "rascunho" | "deletado",
-        publicationDate:
-        newStatus === "publicado"
-          ? post.publicationDate ?? new Date()
-          : null,
-      })
-    }}
-  >
-    <option value="publicado">Publicado</option>
-    <option value="rascunho">Rascunho</option>
-    <option value="deletado">Deletado</option>
-  </select>
-</FormGroup>
+      <FormGroup>
+        <label>Status</label>
+        <select
+          value={post.status ?? "rascunho"}
+          onChange={(e) => {
+            const newStatus = e.target.value;
+            setPost({
+              ...post,
+              status: e.target.value as "publicado" | "rascunho" | "deletado",
+              publicationDate:
+                newStatus === "publicado"
+                  ? post.publicationDate ?? new Date()
+                  : null,
+            })
+          }}
+        >
+          <option value="publicado">Publicado</option>
+          <option value="rascunho">Rascunho</option>
+          <option value="deletado">Deletado</option>
+        </select>
+      </FormGroup>
 
-<FormGroup>
-  <label>Data de Publicação</label>
-  <input
-    type="date"
-    value={
-      post.publicationDate
-        ? new Date(post.publicationDate).toISOString().split("T")[0]
-        : ""
-    }
-    onChange={(e) =>
-      setPost({
-        ...post,
-        publicationDate: e.target.value
-          ? (() => {
-              const [y, m, d] = e.target.value.split("-").map(Number);
-              return new Date(y, m - 1, d);
-            })()
-          : null,
-      })
-    }
-  />
-</FormGroup>
+      <FormGroup>
+        <label>Data de Publicação</label>
+        <input
+          type="date"
+          value={
+            post.publicationDate
+              ? new Date(post.publicationDate).toISOString().split("T")[0]
+              : ""
+          }
+          onChange={(e) =>
+            setPost({
+              ...post,
+              publicationDate: e.target.value
+                ? (() => {
+                  const [y, m, d] = e.target.value.split("-").map(Number);
+                  return new Date(y, m - 1, d);
+                })()
+                : null,
+            })
+          }
+        />
+      </FormGroup>
 
 
       <FormGroup>

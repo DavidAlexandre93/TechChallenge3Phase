@@ -195,7 +195,7 @@ export function Home() {
                 <Meta>
                   <span>👤 {p.author ?? "Prof. Desconhecido"}</span>•{" "}
                   <span>
-                    {p.publicationDate? new Date(new Date(p.publicationDate).getTime() + new Date(p.publicationDate).getTimezoneOffset() * 60000).toLocaleDateString("pt-BR"): "—"}
+                    {p.publicationDate ? new Date(new Date(p.publicationDate).getTime() + new Date(p.publicationDate).getTimezoneOffset() * 60000).toLocaleDateString("pt-BR") : "—"}
                   </span>
                 </Meta>
                 <ReadMore>Ler Completo</ReadMore>

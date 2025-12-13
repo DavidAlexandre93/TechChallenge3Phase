@@ -17,9 +17,9 @@ import { MainLayoutWithHeader } from "@/layout/MainLayoutWithHeader";
 
 function App() {
   return (
-        <BrowserRouter>
-    <AuthProvider>
-      <SearchProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <SearchProvider>
           <Routes>
             {/* 🔓 Páginas SEM Header */}
             <Route element={<MainLayout />}>
@@ -35,7 +35,7 @@ function App() {
               <Route path="/post/:id" element={<PostPage />} />
 
               {/* 🧑‍🏫 Área administrativa (protegida) */}
-             <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
 
               <Route
                 path="/create"
@@ -58,9 +58,9 @@ function App() {
             {/* 🚫 Fallback opcional */}
             {/* <Route path="*" element={<NotFound />} /> */}
           </Routes>
-      </SearchProvider>
-    </AuthProvider>
-        </BrowserRouter>
+        </SearchProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

@@ -12,13 +12,13 @@ export interface IPost {
   updatedAt: Date;
 }
 
-export interface PostModel extends Model<IPost> {}
+export interface PostModel extends Model<IPost> { }
 
 const postSchema = new Schema<IPost>(
   {
-    title:   { type: String, required: true, trim: true },
+    title: { type: String, required: true, trim: true },
     content: { type: String, required: true, trim: true },
-    author:  { type: String, required: true, trim: true },
+    author: { type: String, required: true, trim: true },
 
     status: {
       type: String,
