@@ -22,7 +22,11 @@ jobs:
       - name: 📦 Build imagens
         run: docker compose build
 
-      - name: 🚀 Subir stack
+      - name: 🐳 Subir stack Docker
+        env:
+            PORT: ${{ secrets.PORT }}
+            MONGO_URI: ${{ secrets.MONGO_URI }}
+            JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: docker compose up -d
 
       - name: 🩺 Aguardar healthchecks
