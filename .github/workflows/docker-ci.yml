@@ -20,6 +20,8 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: 📦 Build imagens
+        env:
+            VITE_API_URL: ${{ secrets.VITE_API_URL }}
         run: docker compose build
 
       - name: 🐳 Subir stack Docker
@@ -32,7 +34,16 @@ jobs:
       - name: 🩺 Aguardar healthchecks
         run: |
           echo "Aguardando backend..."
-          sleep 20
+          for i in {1..30}; do
+            if curl -s http://localhost:4000/health; then
+              echo "Backend OK"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Backend não subiu"
+          docker compose logs backend
+          exit 1
           docker compose ps
 
       - name: ✅ Testar endpoints
