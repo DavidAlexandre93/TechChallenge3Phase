@@ -26,25 +26,24 @@ jobs:
 
       - name: 🐳 Subir stack Docker
         env:
-            PORT: ${{ secrets.PORT }}
-            MONGO_URI: ${{ secrets.MONGO_URI }}
-            JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          PORT: ${{ secrets.PORT }}
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: docker compose up -d
 
       - name: 🩺 Aguardar healthchecks
         run: |
           echo "Aguardando backend..."
-          for i in {1..30}; do
-            if curl -s http://localhost:4000/health; then
-              echo "Backend OK"
+          for i in {1..15}; do
+            if curl -f http://localhost:4000/health; then
+              echo "✅ Backend OK"
               exit 0
             fi
             sleep 2
           done
-          echo "Backend não subiu"
+          echo "❌ Backend não subiu"
           docker compose logs backend
           exit 1
-          docker compose ps
 
       - name: ✅ Testar endpoints
         run: |
