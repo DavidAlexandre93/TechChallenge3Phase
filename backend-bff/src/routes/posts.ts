@@ -26,8 +26,33 @@ router.post("/", authenticate, authorizeRole("TEACHER"), async (req: AuthRequest
 
 // Editar post (apenas TEACHER)
 router.put("/:id", authenticate, authorizeRole("TEACHER"), async (req, res) => {
-  const post = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  res.json(post);
+  try {
+    // 1. Log para garantir que passou pela autenticação
+    console.log(`Tentando atualizar post ${req.params.id} com dados:`, req.body);
+
+    const post = await Post.findByIdAndUpdate(
+      req.params.id, 
+      req.body, 
+      { 
+        new: true,           // Retorna o objeto novo, não o antigo
+        runValidators: true  // OBRIGA o Mongo a checar as regras do seu Schema
+      }
+    );
+
+    // 2. Checa se o post realmente existe
+    if (!post) {
+      console.log("Post não encontrado no banco.");
+      return res.status(404).json({ error: "Post não encontrado" });
+    }
+
+    console.log("Post atualizado com sucesso:", post);
+    res.json(post);
+
+  } catch (error: any) {
+    // 3. Captura erros de validação ou de conexão
+    console.error("ERRO AO ATUALIZAR:", error);
+    res.status(400).json({ error: "Erro ao atualizar post", details: error.message });
+  }
 });
 
 // Excluir post com soft delete (apenas TEACHER)

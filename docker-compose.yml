@@ -2,7 +2,7 @@
 
 services:
   mongo:
-    image: mongo:6
+    image: mongo:8.0
     container_name: TC3mongo
     command: ["mongod", "--logpath", "/dev/null", "--logappend"]
     ports:
