@@ -2,13 +2,16 @@
 
 services:
   mongo:
-    image: mongo:8.0
+    image: mongo:6
     container_name: TC3mongo
     command: ["mongod", "--logpath", "/dev/null", "--logappend"]
     ports:
       - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: techchallenge3
     volumes:
       - mongo_data:/data/db
+      - ./docker/mongo-init:/docker-entrypoint-initdb.d:ro
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
