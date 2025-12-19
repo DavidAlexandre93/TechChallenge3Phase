@@ -312,28 +312,6 @@ Essas credenciais permitem testar todas as funcionalidades restritas da aplicaç
 │  ├─ tsconfig.json
 │  ├─ tsconfig.node.json
 │  └─ vite.config.ts
-│
-│     ├─ middleware/
-│     │  └─ auth.ts
-│     ├─ models/
-│     │  ├─ Post.ts
-│     │  └─ User.ts
-│     ├─ routes/
-│     │  ├─ auth.ts
-│     │  └─ posts.ts
-│     ├─ tests/
-│     │  ├─ auth.test.ts
-│     │  ├─ middleware.test.ts
-│     │  ├─ posts.test.ts
-│     │  └─ setupTest.ts
-│     ├─ .dockerignore
-│     ├─ .env.test
-│     ├─ .gitignore
-│     ├─ Dockerfile
-│     ├─ jest.config.js
-│     ├─ package-lock.json
-│     ├─ package.json
-│     └─ tsconfig.json
 ├─ .env
 ├─ .env.example
 ├─ .gitignore
