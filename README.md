@@ -34,8 +34,12 @@ Plataforma educacional full stack desenvolvida como tarefa do Tech Challenge 3, 
   - [Etapas do Pipeline](#etapas-do-pipeline)
   - [Variáveis de Ambiente](#variáveis-de-ambiente)
   - [Benefícios da Estratégia](#benefícios-da-estratégia)
-  - [Possíveis Extensões Futuras](#possíveis-extensões-futuras)
+- [Possíveis Extensões Futuras](#possíveis-extensões-futuras)
 - [Boas Práticas & Segurança](#boas-práticas-e-segurança)
+- [Documentação Técnica do Frontend](#documentação-técnica-do-frontend)
+  - [Setup inicial](#setup-inicial)
+  - [Arquitetura da aplicação](#arquitetura-da-aplicação)
+  - [Guia de uso](#guia-de-uso)
 - [Documentação do Sistema](#documentação-do-sistema)
   - [Arquitetura do Sistema](#arquitetura-do-sistema)
   - [Execução da Aplicação](#execução-da-aplicação)
@@ -401,6 +405,68 @@ Isso garante que o pipeline execute sem expor credenciais no repositório.
 - Seed controlado para ambientes de avaliação
 - Soft delete evita perda de dados.
 - Código tipado com **TypeScript**
+
+---
+
+## Documentação Técnica do Frontend
+
+A SPA foi construída com **React + TypeScript** e empacotada pelo **Vite**, seguindo uma organização por contexto (autenticação e busca), rotas e serviços de API. Esta seção detalha como levantar o ambiente, compreender a arquitetura e utilizar a interface durante a avaliação.
+
+### Setup inicial
+
+1. **Pré-requisitos**
+   - Node.js **>= 20** e npm.
+   - Variável de ambiente `VITE_API_URL` apontando para o BFF (já configurada em `.env.example` com `http://localhost:4000`).
+
+2. **Instalação e execução local** (fora do Docker):
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+- A aplicação sobe em <http://localhost:5173> e utiliza o BFF em `http://localhost:4000`.
+- Scripts adicionais úteis:
+  - `npm run build` — build de produção (executa `tsc -b` e `vite build`).
+  - `npm run preview` — serve o build gerado para inspeção local.
+  - `npm run test` / `npm run coverage` — suíte de testes com **Vitest** e **@testing-library**.
+  - `npm run lint` — checagem com **ESLint**.
+
+3. **Execução com Docker**
+   - `docker compose up --build` na raiz do projeto orquestra frontend, BFF e MongoDB já conectados. O `VITE_API_URL` é fornecido pelo Compose, não sendo necessário ajustes adicionais.
+
+### Arquitetura da aplicação
+
+- **Bootstrap** — `src/main.tsx` monta o React no `#root` e aplica o `StrictMode`, carregando o `App`.
+- **Roteamento** — `src/App.tsx` define todas as rotas via `react-router-dom`, combinando dois layouts:
+  - `MainLayout` para telas sem header (ex.: `/login`).
+  - `MainLayoutWithHeader` para páginas públicas e administrativas (`/`, `/post/:id`, `/dashboard`, `/create`, `/edit/:id`).
+- **Proteção de rotas** — `components/PrivateRoute.tsx` impede acesso sem sessão ou sem o perfil adequado. Rotas administrativas aceitam apenas `TEACHER` e redirecionam para `/login` ou `/` conforme o caso.
+- **Estado global**
+  - `context/AuthProvider.tsx` gerencia sessão e persiste o usuário no `localStorage`, expondo `login/logout` via `AuthContext` (consumido por `useAuth`).
+  - `context/SearchProvider.tsx` guarda o termo de busca compartilhado entre header e listagens.
+- **Camada de API** — `api/api.ts` cria uma instância Axios com `baseURL` derivada de `VITE_API_URL` e injeta o token JWT no header `Authorization` quando existir no `localStorage`. Serviços específicos ficam em `api/authService.ts` (login) e `api/postService.ts` (CRUD de posts).
+- **Páginas e componentes**
+  - `pages/Home.tsx` lista posts publicados e aplica o termo de busca global.
+  - `pages/PostPage.tsx` exibe detalhes de um post específico.
+  - `pages/Dashboard.tsx`, `pages/CreatePost.tsx` e `pages/EditPost.tsx` compõem o fluxo administrativo de gestão de posts.
+  - Elementos estruturais (header, footer) e utilitários (barra de busca) residem em `components/` e são estilizados com **Styled Components**. Temas e estilos globais estão em `styles/theme.ts` e `styles/GlobalStyle.ts`.
+
+### Guia de uso
+
+1. **Autenticação**
+   - Acesse `/login` e utilize as credenciais de professor listadas em [Credenciais de acesso](#credenciais-de-acesso).
+   - Após login bem-sucedido, o token é salvo em `localStorage` e passa a ser enviado automaticamente pelo Axios para todas as chamadas.
+
+2. **Exploração como aluno**
+   - Em `/`, a listagem mostra apenas posts publicados e com `publicationDate` liberada. Utilize a barra de busca no header para filtrar por título, autor ou conteúdo.
+
+3. **Fluxo administrativo (professor)**
+   - `/dashboard`: visão geral de posts (inclusive rascunhos e deletados) com ações rápidas.
+   - `/create`: formulário para criar novos posts, permitindo definir status (`rascunho`/`publicado`) e data de publicação.
+   - `/edit/:id`: edição e remoção (soft delete) de posts existentes.
+   - Ao sair, use o botão de logout (header) para limpar a sessão persistida.
 
 ---
 
