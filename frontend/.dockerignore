@@ -4,3 +4,13 @@ npm-debug.log
 .vscode
 .git
 .env
+coverage
+*.log
+*.local
+*.DS_Store
+*.swp
+*.zip
+*.tar.gz
+*.tgz
+tmp
+logs

@@ -350,27 +350,13 @@ npm run test:coverage
 
 ## CI/CD
 
-Pipeline automatizado configurado em `.github/workflows/ci.yml`, responsável por validar continuamente o **backend (BFF)** e o **frontend SPA**, garantindo qualidade, estabilidade e integração entre as camadas.
+A automação foi reorganizada em três _workflows_ independentes, localizados em `.github/workflows`:
 
-### Etapas do Pipeline
+- **`backend.yml`** — valida o BFF (instalação, testes com **Jest**, build) e publica a imagem Docker no registry configurado (ex.: Docker Hub).
+- **`frontend.yml`** — valida o SPA (instalação, testes com **Vitest**, build) e publica a imagem Docker correspondente.
+- **`fullstack.yml`** — fluxo de _end-to-end_ que constrói as imagens localmente, sobe a stack com **Docker Compose**, espera o _healthcheck_ do backend (`/health`) e valida a disponibilidade do frontend.
 
-- **Checkout do código** a cada `push` ou `pull request` na branch `main`.
-- **Setup do ambiente Node.js (v20)** para backend e frontend, com cache de dependências.
-- **Backend**
-  - Instalação das dependências.
-  - Execução dos testes automatizados (**Jest**).
-  - Build do projeto TypeScript.
-- **Frontend**
-  - Instalação das dependências.
-  - Execução dos testes automatizados (**Vitest**).
-  - Build da aplicação SPA com **Vite**.
-- **Docker**
-  - Build completo da stack via **Docker Compose**.
-  - Subida dos containers para validação de integração.
-  - Verificação de saúde do backend via endpoint `/health`.
-  - Teste de disponibilidade do frontend via requisição HTTP.
-- **Cleanup**
-  - Encerramento dos containers e volumes ao final do job, mesmo em caso de falha.
+Todos os _workflows_ são disparados em `push` e `pull_request` para a branch `main` e utilizam _caches_ do **npm** para acelerar as execuções. Segredos como `MONGO_URI`, `JWT_SECRET`, `VITE_API_URL` e credenciais do registry devem ser configurados nos **GitHub Secrets** do repositório.
 
 ### Variáveis de Ambiente
 
