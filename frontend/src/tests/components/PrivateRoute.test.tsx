@@ -30,7 +30,9 @@ describe("PrivateRoute", () => {
   });
 
   it("renderiza children quando usuário está autenticado", () => {
-    (useAuth as Mock).mockReturnValue({ user: { name: "João" } });
+    (useAuth as Mock).mockReturnValue({
+      user: { name: "João", role: "TEACHER" },
+    });
 
     render(
       <MemoryRouter initialEntries={["/dashboard"]}>
@@ -38,7 +40,7 @@ describe("PrivateRoute", () => {
           <Route
             path="/dashboard"
             element={
-              <PrivateRoute>
+              <PrivateRoute allowedRoles={["TEACHER"]}>
                 <div>Conteúdo Protegido</div>
               </PrivateRoute>
             }
@@ -49,5 +51,31 @@ describe("PrivateRoute", () => {
     );
 
     expect(screen.getByText("Conteúdo Protegido")).toBeInTheDocument();
+  });
+
+  it("bloqueia acesso quando usuário não tem papel permitido", () => {
+    (useAuth as Mock).mockReturnValue({
+      user: { name: "Aluno", role: "STUDENT" },
+    });
+
+    render(
+      <MemoryRouter initialEntries={["/dashboard"]}>
+        <Routes>
+          <Route path="/" element={<div>Home Pública</div>} />
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute allowedRoles={["TEACHER"]}>
+                <div>Conteúdo Protegido</div>
+              </PrivateRoute>
+            }
+          />
+          <Route path="/login" element={<div>Página de Login</div>} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.queryByText("Conteúdo Protegido")).not.toBeInTheDocument();
+    expect(screen.getByText("Home Pública")).toBeInTheDocument();
   });
 });
