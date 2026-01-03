@@ -1,11 +1,10 @@
 import styled from "styled-components";
-import { useEffect, useState } from "react";
-import { getAllPosts } from "@/api/postService";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSearch } from "@/hooks/useSearch";
 import { useAuth } from "@/hooks/useAuth";
-import type { Post } from "@/models/postModel";
 import { SearchBar } from "@/components/Search";
+import { usePosts } from "@/hooks/usePosts";
 
 const Container = styled.div`
   display: flex;
@@ -148,13 +147,13 @@ const ReadMore = styled.button`
 `;
 
 export function Home() {
-  const [posts, setPosts] = useState<Post[]>([]);
   const { searchTerm } = useSearch();
   const { user } = useAuth();
+  const { posts, fetchPosts, loading } = usePosts();
 
   useEffect(() => {
-    getAllPosts().then(setPosts);
-  }, []);
+    fetchPosts();
+  }, [fetchPosts]);
 
   const postsFiltrados = posts.filter((p) => {
     const termo = searchTerm.toLowerCase();
@@ -177,7 +176,11 @@ export function Home() {
       </Hero>
 
       <PostsSection>
-        {postsFiltrados.length === 0 ? (
+        {loading ? (
+          <p style={{ color: "#888", fontWeight: "500", textAlign: "center" }}>
+            Carregando posts...
+          </p>
+        ) : postsFiltrados.length === 0 ? (
           <p style={{ color: "#888", fontWeight: "500", textAlign: "center" }}>
             Nenhum post encontrado.
           </p>

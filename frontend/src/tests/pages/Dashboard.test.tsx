@@ -3,13 +3,13 @@ import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { Dashboard } from "@/pages/Dashboard";
 import { MemoryRouter } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { getAllPosts, deletePost } from "@/api/postService";
+import { usePosts } from "@/hooks/usePosts";
 import { ThemeProvider } from "styled-components";
 import { lightTheme } from "@/styles/theme";
 
 // Mocks
 vi.mock("@/hooks/useAuth");
-vi.mock("@/api/postService");
+vi.mock("@/hooks/usePosts");
 
 const mockNavigate = vi.fn();
 vi.mock("react-router-dom", async () => {
@@ -21,12 +21,25 @@ vi.mock("react-router-dom", async () => {
 });
 
 describe("Dashboard Page", () => {
+    const mockFetchPosts = vi.fn();
+    const mockDeletePost = vi.fn();
+
     beforeEach(() => {
         vi.clearAllMocks();
 
         // avoid errors from confirm/alert
         vi.spyOn(window, "confirm").mockReturnValue(true);
         vi.spyOn(window, "alert").mockImplementation(() => { });
+        (usePosts as Mock).mockReturnValue({
+            posts: mockPosts,
+            loading: false,
+            error: null,
+            fetchPosts: mockFetchPosts,
+            fetchPostById: vi.fn(),
+            createPost: vi.fn(),
+            updatePost: vi.fn(),
+            deletePost: mockDeletePost,
+        });
     });
 
     const mockPosts = [
@@ -63,11 +76,10 @@ describe("Dashboard Page", () => {
     // ---------------------- //
     it("carrega posts para TEACHER", async () => {
         (useAuth as Mock).mockReturnValue({ user: { role: "TEACHER" } });
-        (getAllPosts as Mock).mockResolvedValue(mockPosts);
 
         renderDash();
 
-        expect(getAllPosts).toHaveBeenCalled();
+        expect(mockFetchPosts).toHaveBeenCalled();
 
         await waitFor(() => {
             expect(screen.getByText("Post Público")).toBeInTheDocument();
@@ -78,7 +90,6 @@ describe("Dashboard Page", () => {
     // ---------------------- //
     it("mostra apenas posts publicados para ALUNO", async () => {
         (useAuth as Mock).mockReturnValue({ user: { role: "ALUNO" } });
-        (getAllPosts as Mock).mockResolvedValue(mockPosts);
 
         renderDash();
 
@@ -91,7 +102,6 @@ describe("Dashboard Page", () => {
     // ---------------------- //
     it("navega para /edit/:id ao clicar no editar", async () => {
         (useAuth as Mock).mockReturnValue({ user: { role: "TEACHER" } });
-        (getAllPosts as Mock).mockResolvedValue(mockPosts);
 
         render(
             <ThemeProvider theme={lightTheme}>
@@ -113,8 +123,7 @@ describe("Dashboard Page", () => {
     // ---------------------- //
     it("chama deletePost e recarrega lista", async () => {
         (useAuth as Mock).mockReturnValue({ user: { role: "TEACHER" } });
-        (getAllPosts as Mock).mockResolvedValue(mockPosts);
-        (deletePost as Mock).mockResolvedValue({});
+        mockDeletePost.mockResolvedValue({});
 
         render(
             <ThemeProvider theme={lightTheme}>
@@ -131,15 +140,14 @@ describe("Dashboard Page", () => {
         fireEvent.click(secondDeleteIcon);
 
         await waitFor(() => {
-            expect(deletePost).toHaveBeenCalledWith("2");
-            expect(getAllPosts).toHaveBeenCalledTimes(2); // inicial + reload
+            expect(mockDeletePost).toHaveBeenCalledWith("2");
+            expect(mockFetchPosts).toHaveBeenCalledTimes(2); // inicial + reload
         });
     });
 
     // ---------------------- //
     it("formata data corretamente", async () => {
         (useAuth as Mock).mockReturnValue({ user: { role: "TEACHER" } });
-        (getAllPosts as Mock).mockResolvedValue(mockPosts);
 
         renderDash();
 
@@ -155,7 +163,6 @@ describe("Dashboard Page", () => {
         window.dispatchEvent(new Event("resize"));
 
         (useAuth as Mock).mockReturnValue({ user: { role: "TEACHER" } });
-        (getAllPosts as Mock).mockResolvedValue(mockPosts);
 
         renderDash();
 

@@ -1,8 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getPostById } from "@/api/postService";
 import type { Post } from "@/models/postModel";
 import styled from "styled-components";
+import { usePosts } from "@/hooks/usePosts";
 
 const Container = styled.div`
   display: flex;
@@ -241,6 +241,21 @@ export function PostPage() {
   const navigate = useNavigate();
   const [post, setPost] = useState<Post | null>(null);
   const [comment, setComment] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { fetchPostById } = usePosts();
+
+  useEffect(() => {
+    if (!id) return;
+
+    setIsLoading(true);
+    fetchPostById(id)
+      .then((res) => setPost(res))
+      .catch((err) => console.error("Erro ao carregar post:", err))
+      .finally(() => setIsLoading(false));
+  }, [fetchPostById, id]);
+
+  if (isLoading || !post) {
+      
   const [comments, setComments] = useState<Comment[]>([]);
 
   useEffect(() => {

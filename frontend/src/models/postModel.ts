@@ -9,4 +9,14 @@ interface Post {
   publicationDate?: Date | null;
 }
 
-export type { Post };
+interface PostPayload {
+  title: string;
+  content: string;
+  author: string;
+  status: Post["status"];
+  publicationDate?: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type { Post, PostPayload };

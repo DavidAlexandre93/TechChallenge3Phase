@@ -2,11 +2,11 @@ import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { EditPost } from "@/pages/EditPost";
-import { getPostById, updatePost } from "@/api/postService";
 import { ThemeProvider } from "styled-components";
 import { lightTheme } from "@/styles/theme";
+import { usePosts } from "@/hooks/usePosts";
 
-vi.mock("@/api/postService");
+vi.mock("@/hooks/usePosts");
 
 const mockNavigate = vi.fn();
 vi.mock("react-router-dom", async () => {
@@ -18,12 +18,25 @@ vi.mock("react-router-dom", async () => {
 });
 
 describe("EditPost Page", () => {
+    const mockFetchPostById = vi.fn();
+    const mockUpdatePost = vi.fn();
+
     beforeEach(() => {
         vi.clearAllMocks();
 
         vi.spyOn(window, "confirm").mockReturnValue(true);
         vi.spyOn(window, "alert").mockImplementation(() => { });
         vi.spyOn(console, "error").mockImplementation(() => { });
+        (usePosts as Mock).mockReturnValue({
+            posts: [],
+            loading: false,
+            error: null,
+            fetchPosts: vi.fn(),
+            fetchPostById: mockFetchPostById,
+            createPost: vi.fn(),
+            updatePost: mockUpdatePost,
+            deletePost: vi.fn(),
+        });
     });
 
     const post = {
@@ -50,7 +63,7 @@ describe("EditPost Page", () => {
 
     // ---------------------- //
     it("mostra carregando", async () => {
-        (getPostById as Mock).mockResolvedValue(post);
+        mockFetchPostById.mockResolvedValue(post);
 
         renderWithId("123");
 
@@ -61,7 +74,7 @@ describe("EditPost Page", () => {
 
     // ---------------------- //
     it("erro quando API retorna null", async () => {
-        (getPostById as Mock).mockResolvedValue(null);
+        mockFetchPostById.mockResolvedValue(null);
 
         renderWithId("123");
 
@@ -71,7 +84,7 @@ describe("EditPost Page", () => {
 
     // ---------------------- //
     it("preenche campos corretamente", async () => {
-        (getPostById as Mock).mockResolvedValue(post);
+        mockFetchPostById.mockResolvedValue(post);
 
         renderWithId("123");
 
@@ -82,7 +95,7 @@ describe("EditPost Page", () => {
 
     // ---------------------- //
     it("edita campos", async () => {
-        (getPostById as Mock).mockResolvedValue(post);
+        mockFetchPostById.mockResolvedValue(post);
 
         renderWithId("123");
 
@@ -95,8 +108,8 @@ describe("EditPost Page", () => {
 
     // ---------------------- //
     it("salva alterações", async () => {
-        (getPostById as Mock).mockResolvedValue(post);
-        (updatePost as Mock).mockResolvedValue({});
+        mockFetchPostById.mockResolvedValue(post);
+        mockUpdatePost.mockResolvedValue({ ...post });
 
         renderWithId("123");
 
@@ -104,15 +117,15 @@ describe("EditPost Page", () => {
         fireEvent.click(btn);
 
         await waitFor(() => {
-            expect(updatePost).toHaveBeenCalled();
+            expect(mockUpdatePost).toHaveBeenCalled();
             expect(mockNavigate).toHaveBeenCalledWith("/post/123");
         });
     });
 
     // ---------------------- //
     it("erro ao salvar", async () => {
-        (getPostById as Mock).mockResolvedValue(post);
-        (updatePost as Mock).mockRejectedValue({
+        mockFetchPostById.mockResolvedValue(post);
+        mockUpdatePost.mockRejectedValue({
             response: { data: { message: "Falha no servidor" } },
         });
 
@@ -129,14 +142,14 @@ describe("EditPost Page", () => {
 
     // ---------------------- //
     it("não salva se título ou conteúdo vazios", async () => {
-        (getPostById as Mock).mockResolvedValue({ ...post, title: "" });
+        mockFetchPostById.mockResolvedValue({ ...post, title: "" });
 
         renderWithId("123");
 
         const btn = await screen.findByText("Salvar Alterações");
         fireEvent.click(btn);
 
-        expect(updatePost).not.toHaveBeenCalled();
+        expect(mockUpdatePost).not.toHaveBeenCalled();
         expect(window.alert).toHaveBeenCalledWith(
             "Título e conteúdo são obrigatórios."
         );

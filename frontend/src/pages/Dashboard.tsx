@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getAllPosts, deletePost } from "@/api/postService";
 import { useAuth } from "@/hooks/useAuth";
 import type { Post } from "@/models/postModel";
 import { Edit2, Trash2, PlusCircle } from "lucide-react";
+import { usePosts } from "@/hooks/usePosts";
 
 const Container = styled.div`
   width: 100%;
@@ -178,22 +178,13 @@ const Actions = styled.div`
 
 export function Dashboard() {
   const { user } = useAuth();
-  const [posts, setPosts] = useState<Post[]>([]);
+  const { posts, fetchPosts, deletePost } = usePosts();
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    getAllPosts().then((res) => {
-      if (!res || res.length === 0) return;
-
-      // Professores veem todos os posts
-      if (user?.role === "TEACHER") {
-        setPosts(res);
-      } else {
-        setPosts(res.filter((p) => p.status === "publicado"));
-      }
-    });
-  }, [user]);
+    fetchPosts();
+  }, [fetchPosts]);
 
   useEffect(() => {
     const checkScreen = () => {
@@ -209,8 +200,7 @@ export function Dashboard() {
   async function handleDelete(id: string) {
     if (!confirm("Tem certeza que deseja excluir este post?")) return;
     await deletePost(id);
-    const updatedPosts = await getAllPosts();
-    setPosts(updatedPosts);
+    await fetchPosts();
   }
 
   function handleEdit(id?: string) {
@@ -229,6 +219,11 @@ export function Dashboard() {
     // "04/10/2025" → "04/10/25"
     return full.replace(/(\d{4})$/, (yy) => yy.slice(-2));
   }
+
+  const filteredPosts: Post[] =
+    user?.role === "TEACHER"
+      ? posts
+      : posts.filter((p) => p.status === "publicado");
 
   return (
     <Container>
@@ -253,7 +248,7 @@ export function Dashboard() {
           </tr>
         </thead>
         <tbody>
-          {posts.map((post) => (
+          {filteredPosts.map((post) => (
             <tr key={post._id}>
               <Td>{post.title}</Td>
               <Td>{post.author}</Td>

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { createPost } from "@/api/postService";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
 import styled from "styled-components";
+import { useAuth } from "@/hooks/useAuth";
+import { usePosts } from "@/hooks/usePosts";
 
 const Container = styled.div`
   width: calc(100% - 40px);
@@ -114,9 +114,11 @@ const Button = styled.button<{ $variant?: "primary" | "ghost" }>`
 
 export function CreatePost() {
   const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState(useAuth().user?.name || "Autor Desconhecido");
+  const { user } = useAuth();
+  const [author, setAuthor] = useState(user?.name || "Autor Desconhecido");
   const [content, setContent] = useState("");
   const navigate = useNavigate();
+  const { createPost } = usePosts();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -127,17 +129,22 @@ export function CreatePost() {
     const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement;
     const finalStatus = submitter.value === "publicar" ? "publicado" : "rascunho";
 
-    await createPost({
-      title,
-      content,
-      author,
-      status: finalStatus,
-      publicationDate: finalStatus === "publicado" ? new Date() : null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
+    try {
+      await createPost({
+        title,
+        content,
+        author,
+        status: finalStatus,
+        publicationDate: finalStatus === "publicado" ? new Date() : null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
 
-    navigate("/");
+      navigate("/");
+    } catch (error) {
+      console.error("Erro ao criar post:", error);
+      alert("Não foi possível criar a postagem. Tente novamente.");
+    }
   }
 
   return (
