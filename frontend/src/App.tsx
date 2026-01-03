@@ -35,12 +35,19 @@ function App() {
               <Route path="/post/:id" element={<PostPage />} />
 
               {/* 🧑‍🏫 Área administrativa (protegida) */}
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <PrivateRoute allowedRoles={["TEACHER"]}>
+                    <Dashboard />
+                  </PrivateRoute>
+                }
+              />
 
               <Route
                 path="/create"
                 element={
-                  <PrivateRoute>
+                  <PrivateRoute allowedRoles={["TEACHER"]}>
                     <CreatePost />
                   </PrivateRoute>
                 }
@@ -48,7 +55,7 @@ function App() {
               <Route
                 path="/edit/:id"
                 element={
-                  <PrivateRoute>
+                  <PrivateRoute allowedRoles={["TEACHER"]}>
                     <EditPost />
                   </PrivateRoute>
                 }
