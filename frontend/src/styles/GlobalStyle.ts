@@ -7,28 +7,52 @@ export const GlobalStyle = createGlobalStyle`
     padding: 0;
   }
 
-  html, body, #root {
+  html, body {
     width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* ✅ Centraliza horizontalmente */
-    justify-content: flex-start;
+    min-height: 100%;
+    display: block;
     background: ${({ theme }) => theme.colors.background};
     color: ${({ theme }) => theme.colors.text};
     font-family: 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     overflow-x: hidden;
   }
 
   main {
     width: 100%;
-    max-width: 1200px; /* ✅ Limita a largura do conteúdo */
+    max-width: 1200px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    margin: 0 auto; /* ✅ Centraliza o bloco principal */
-    padding: 0;
+    gap: 24px;
+    margin: 0 auto;
+    padding: 24px 32px 32px;
+  }
+
+  @media (max-width: 1024px) {
+    main {
+      padding: 20px 24px 28px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    main {
+      padding: 16px;
+      gap: 16px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    main {
+      padding: 12px;
+    }
   }
 
   a {

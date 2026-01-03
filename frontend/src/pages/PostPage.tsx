@@ -115,7 +115,7 @@ const CommentsSection = styled.div`
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  padding: 25px 35px;
+  padding: 25px 35px 30px;
   max-width: 750px;
   width: 100%;
 
@@ -175,6 +175,13 @@ const SendButton = styled.button`
     background: #1e40af;
     transform: translateY(-2px);
   }
+
+  &:disabled {
+    background: #93c5fd;
+    cursor: not-allowed;
+    transform: none;
+    opacity: 0.8;
+  }
 `;
 
 const NoComments = styled.p`
@@ -184,6 +191,50 @@ const NoComments = styled.p`
   margin-top: 10px;
   text-align: center;
 `;
+
+const CommentForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+`;
+
+const CommentList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+`;
+
+const CommentItem = styled.li`
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+`;
+
+const CommentMeta = styled.span`
+  display: block;
+  color: #6b7280;
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+`;
+
+const CommentText = styled.p`
+  color: #111827;
+  font-size: 0.95rem;
+  margin: 0;
+  line-height: 1.5;
+`;
+
+type Comment = {
+  id: string;
+  text: string;
+  createdAt: string;
+};
 
 export function PostPage() {
   const { id } = useParams();
@@ -204,6 +255,52 @@ export function PostPage() {
   }, [fetchPostById, id]);
 
   if (isLoading || !post) {
+      
+  const [comments, setComments] = useState<Comment[]>([]);
+
+  useEffect(() => {
+    if (id) {
+      getPostById(id)
+        .then((res) => setPost(res))
+        .catch((err) => console.error("Erro ao carregar post:", err));
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (!id) return;
+
+    try {
+      const saved = localStorage.getItem(`comments-${id}`);
+      setComments(saved ? JSON.parse(saved) : []);
+      setComment("");
+    } catch (error) {
+      console.error("Erro ao carregar comentários:", error);
+      setComments([]);
+    }
+  }, [id]);
+
+  const handleSubmitComment = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!id) return;
+
+    const trimmed = comment.trim();
+    if (!trimmed) return;
+
+    const newComment: Comment = {
+      id: crypto.randomUUID ? crypto.randomUUID() : `c-${Date.now()}`,
+      text: trimmed,
+      createdAt: new Date().toISOString(),
+    };
+
+    setComments((prev) => {
+      const updated = [newComment, ...prev];
+      localStorage.setItem(`comments-${id}`, JSON.stringify(updated));
+      return updated;
+    });
+    setComment("");
+  };
+
+  if (!post) {
     return (
       <Container>
         <p>Carregando postagem...</p>
@@ -235,13 +332,32 @@ export function PostPage() {
 
       <CommentsSection>
         <CommentTitle>Comentários</CommentTitle>
-        <CommentBox
-          placeholder="Deixe seu comentário..."
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-        />
-        <SendButton>Enviar Comentário</SendButton>
-        <NoComments>Seja o primeiro a comentar.</NoComments>
+        <CommentForm onSubmit={handleSubmitComment}>
+          <CommentBox
+            aria-label="Campo para comentar"
+            placeholder="Deixe seu comentário..."
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
+          <SendButton type="submit" disabled={!comment.trim()}>
+            Enviar Comentário
+          </SendButton>
+        </CommentForm>
+
+        {comments.length === 0 ? (
+          <NoComments>Seja o primeiro a comentar.</NoComments>
+        ) : (
+          <CommentList>
+            {comments.map((entry) => (
+              <CommentItem key={entry.id}>
+                <CommentMeta>
+                  {new Date(entry.createdAt).toLocaleString("pt-BR")}
+                </CommentMeta>
+                <CommentText>{entry.text}</CommentText>
+              </CommentItem>
+            ))}
+          </CommentList>
+        )}
       </CommentsSection>
     </Container>
   );
