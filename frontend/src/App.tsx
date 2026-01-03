@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthProvider";
 import { SearchProvider } from "@/context/SearchProvider";
 import { PrivateRoute } from "@/components/PrivateRoute";
+import { PostProvider } from "@/context/PostProvider";
 
 // 🧩 Páginas
 import { Home } from "@/pages/Home";
@@ -20,51 +21,53 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <SearchProvider>
-          <Routes>
-            {/* 🔓 Páginas SEM Header */}
-            <Route element={<MainLayout />}>
-              <Route path="/login" element={<Login />} />
-            </Route>
+          <PostProvider>
+            <Routes>
+              {/* 🔓 Páginas SEM Header */}
+              <Route element={<MainLayout />}>
+                <Route path="/login" element={<Login />} />
+              </Route>
 
-            {/* 🔒 Páginas COM Header */}
-            <Route element={<MainLayoutWithHeader />}>
-              {/* 🏠 Página pública */}
-              <Route path="/" element={<Home />} />
+              {/* 🔒 Páginas COM Header */}
+              <Route element={<MainLayoutWithHeader />}>
+                {/* 🏠 Página pública */}
+                <Route path="/" element={<Home />} />
 
-              {/* 📖 Leitura de post */}
-              <Route path="/post/:id" element={<PostPage />} />
+                {/* 📖 Leitura de post */}
+                <Route path="/post/:id" element={<PostPage />} />
 
-              {/* 🧑‍🏫 Área administrativa (protegida) */}
-              <Route
-                path="/dashboard"
-                element={
-                  <PrivateRoute allowedRoles={["TEACHER"]}>
-                    <Dashboard />
-                  </PrivateRoute>
-                }
-              />
+                {/* 🧑‍🏫 Área administrativa (protegida) */}
+                <Route
+                  path="/dashboard"
+                  element={
+                    <PrivateRoute allowedRoles={["TEACHER"]}>
+                      <Dashboard />
+                    </PrivateRoute>
+                  }
+                />
 
-              <Route
-                path="/create"
-                element={
-                  <PrivateRoute allowedRoles={["TEACHER"]}>
-                    <CreatePost />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/edit/:id"
-                element={
-                  <PrivateRoute allowedRoles={["TEACHER"]}>
-                    <EditPost />
-                  </PrivateRoute>
-                }
-              />
-            </Route>
+                <Route
+                  path="/create"
+                  element={
+                    <PrivateRoute allowedRoles={["TEACHER"]}>
+                      <CreatePost />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/edit/:id"
+                  element={
+                    <PrivateRoute allowedRoles={["TEACHER"]}>
+                      <EditPost />
+                    </PrivateRoute>
+                  }
+                />
+              </Route>
 
-            {/* 🚫 Fallback opcional */}
-            {/* <Route path="*" element={<NotFound />} /> */}
-          </Routes>
+              {/* 🚫 Fallback opcional */}
+              {/* <Route path="*" element={<NotFound />} /> */}
+            </Routes>
+          </PostProvider>
         </SearchProvider>
       </AuthProvider>
     </BrowserRouter>

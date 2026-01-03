@@ -3,13 +3,13 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { Home } from "@/pages/Home";
 
-import { getAllPosts } from "@/api/postService";
 import { useSearch } from "@/hooks/useSearch";
 import { useAuth } from "@/hooks/useAuth";
+import { usePosts } from "@/hooks/usePosts";
 
-vi.mock("@/api/postService");
 vi.mock("@/hooks/useSearch");
 vi.mock("@/hooks/useAuth");
+vi.mock("@/hooks/usePosts");
 
 describe("Home Page", () => {
   const mockPosts = [
@@ -32,8 +32,17 @@ describe("Home Page", () => {
   ];
 
   beforeEach(() => {
-    (getAllPosts as Mock).mockResolvedValue(mockPosts);
     (useSearch as Mock).mockReturnValue({ searchTerm: "" });
+    (usePosts as Mock).mockReturnValue({
+      posts: mockPosts,
+      loading: false,
+      error: null,
+      fetchPosts: vi.fn(),
+      fetchPostById: vi.fn(),
+      createPost: vi.fn(),
+      updatePost: vi.fn(),
+      deletePost: vi.fn(),
+    });
   });
 
   it("carrega e exibe somente posts publicados para visitante", async () => {

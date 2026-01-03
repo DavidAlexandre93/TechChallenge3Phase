@@ -2,15 +2,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { CreatePost } from "@/pages/CreatePost";
 import { MemoryRouter } from "react-router-dom";
+import { usePosts } from "@/hooks/usePosts";
+import { useAuth } from "@/hooks/useAuth";
 
-// mocks
-vi.mock("@/api/postService", () => ({
-    createPost: vi.fn(),
-}));
-
-vi.mock("@/hooks/useAuth", () => ({
-    useAuth: () => ({ user: { name: "Usuário Teste" } }),
-}));
+vi.mock("@/hooks/usePosts");
+vi.mock("@/hooks/useAuth");
 
 const mockNavigate = vi.fn();
 vi.mock("react-router-dom", async (importOriginal) => {
@@ -23,13 +19,25 @@ vi.mock("react-router-dom", async (importOriginal) => {
     };
 });
 
-import { createPost } from "@/api/postService";
 import { ThemeProvider } from "styled-components";
 import { lightTheme } from "@/styles/theme";
 
 describe("CreatePost", () => {
+    const mockCreatePost = vi.fn();
+
     beforeEach(() => {
         vi.clearAllMocks();
+        (usePosts as unknown as () => unknown).mockReturnValue({
+            posts: [],
+            loading: false,
+            error: null,
+            fetchPosts: vi.fn(),
+            fetchPostById: vi.fn(),
+            createPost: mockCreatePost,
+            updatePost: vi.fn(),
+            deletePost: vi.fn(),
+        });
+        (useAuth as unknown as () => unknown).mockReturnValue({ user: { name: "Usuário Teste" } });
     });
 
     function setup() {
@@ -81,7 +89,7 @@ describe("CreatePost", () => {
         fireEvent.click(screen.getByRole("button", { name: "Salvar Rascunho" }));
 
         await waitFor(() => {
-            expect(createPost).toHaveBeenCalledWith(
+            expect(mockCreatePost).toHaveBeenCalledWith(
                 expect.objectContaining({
                     title: "Rascunho",
                     status: "rascunho",
@@ -102,7 +110,7 @@ describe("CreatePost", () => {
         fireEvent.click(screen.getByRole("button", { name: "Publicar Post" }));
 
         await waitFor(() => {
-            expect(createPost).toHaveBeenCalledWith(
+            expect(mockCreatePost).toHaveBeenCalledWith(
                 expect.objectContaining({
                     title: "Publicação",
                     content: "",

@@ -1,7 +1,8 @@
-import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { PostPage } from "@/pages/PostPage";
+import { usePosts } from "@/hooks/usePosts";
 
 // mocks
 const mockNavigate = vi.fn();
@@ -16,14 +17,10 @@ vi.mock("react-router-dom", async (importOriginal) => {
   };
 });
 
-vi.mock("@/api/postService", () => ({
-  getPostById: vi.fn(),
-}));
-
-import { getPostById } from "@/api/postService";
+vi.mock("@/hooks/usePosts");
 
 const mockPost = {
-  id: "123",
+  _id: "123",
   title: "Post de Teste",
   content: "Conteúdo do post",
   author: "Autor X",
@@ -34,8 +31,20 @@ const mockPost = {
 };
 
 describe("PostPage", () => {
+  const mockFetchPostById = vi.fn();
+
   beforeEach(() => {
     vi.clearAllMocks();
+    (usePosts as unknown as () => unknown).mockReturnValue({
+      posts: [],
+      loading: false,
+      error: null,
+      fetchPosts: vi.fn(),
+      fetchPostById: mockFetchPostById,
+      createPost: vi.fn(),
+      updatePost: vi.fn(),
+      deletePost: vi.fn(),
+    });
   });
 
   function setup() {
@@ -47,7 +56,7 @@ describe("PostPage", () => {
   }
 
   it("exibe 'Carregando postagem...' inicialmente", async () => {
-    (getPostById as Mock).mockResolvedValue(mockPost);
+    mockFetchPostById.mockResolvedValue(mockPost);
     setup();
 
     expect(screen.getByText("Carregando postagem...")).toBeInTheDocument();
@@ -57,11 +66,11 @@ describe("PostPage", () => {
   });
 
   it("carrega e exibe o post", async () => {
-    (getPostById as Mock).mockResolvedValue(mockPost);
+    mockFetchPostById.mockResolvedValue(mockPost);
 
     setup();
 
-    expect(getPostById).toHaveBeenCalledWith("123");
+    expect(mockFetchPostById).toHaveBeenCalledWith("123");
 
     await waitFor(() => {
       expect(screen.getByText("Post de Teste")).toBeInTheDocument();
@@ -72,7 +81,7 @@ describe("PostPage", () => {
   });
 
   it("volta ao clicar no botão", async () => {
-    (getPostById as Mock).mockResolvedValue(mockPost);
+    mockFetchPostById.mockResolvedValue(mockPost);
 
     setup();
 
@@ -86,7 +95,7 @@ describe("PostPage", () => {
   });
 
   it("renderiza status e data corretamente", async () => {
-    (getPostById as Mock).mockResolvedValue(mockPost);
+    mockFetchPostById.mockResolvedValue(mockPost);
 
     setup();
 

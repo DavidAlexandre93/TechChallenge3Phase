@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getPostById, updatePost } from "@/api/postService";
 import type { Post } from "@/models/postModel";
 import type { AxiosError } from "axios";
 import styled from "styled-components";
+import { usePosts } from "@/hooks/usePosts";
 
 const Container = styled.div`
   width: calc(100% - 40px);
@@ -102,6 +102,7 @@ export function EditPost() {
   const [post, setPost] = useState<Post | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { fetchPostById, updatePost } = usePosts();
   const navigate = useNavigate();
 
   // 🧩 Busca do post
@@ -113,11 +114,11 @@ export function EditPost() {
     }
 
     let mounted = true;
-    getPostById(id)
+    fetchPostById(id)
       .then((p) => {
         if (!mounted) return;
         if (!p) {
-          console.error("❌ getPostById retornou null ou undefined.");
+          console.error("❌ fetchPostById retornou null ou undefined.");
           setError("Postagem não encontrada.");
         } else {
           setPost(p);
@@ -131,7 +132,7 @@ export function EditPost() {
     return () => {
       mounted = false;
     };
-  }, [id]);
+  }, [fetchPostById, id]);
 
   // 🔸 Mensagem de erro
   if (error) {
